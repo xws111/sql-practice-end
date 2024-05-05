@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xws111.sqlpractice.model.dto.question.QuestionQueryRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
 * @author xg

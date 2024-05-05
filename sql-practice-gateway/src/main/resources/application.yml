@@ -4,6 +4,9 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
     gateway:
+      discovery:
+        locator:
+          enabled: true #开启注册中心路由功能
       routes:
         - id: sql-practice-user-service
           uri: lb://sql-practice-user-service
@@ -23,14 +26,15 @@ spring:
     web-application-type: reactive
 server:
   port: 8100
-#knife4j:
-#  gateway:
-#    # ① 第一个配置，开启gateway聚合组件
-#    enabled: true
-#    # ② 第二行配置，设置聚合模式采用discover服务发现的模式
-#    strategy: discover
-#    discover:
-#      # ③ 第三行配置，开启discover模式
-#      enabled: true
-#      # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
-#      version: swagger2
+
+knife4j:
+  gateway:
+    # ① 第一个配置，开启gateway聚合组件
+    enabled: true
+    # ② 第二行配置，设置聚合模式采用discover服务发现的模式
+    strategy: discover
+    discover:
+      # ③ 第三行配置，开启discover模式
+      enabled: true
+      # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
+      version: swagger2

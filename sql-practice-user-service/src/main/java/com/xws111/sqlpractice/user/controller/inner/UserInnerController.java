@@ -4,7 +4,7 @@ package com.xws111.sqlpractice.user.controller.inner;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import com.xws111.sqlpractice.user.service.UserService;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

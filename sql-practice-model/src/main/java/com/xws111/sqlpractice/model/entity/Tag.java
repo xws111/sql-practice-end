@@ -18,22 +18,25 @@ public class Tag implements Serializable {
     /**
      * 标签id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.AUTO, value = "tag_id")
     private Integer id;
 
     /**
      * 标签名称
      */
+    @TableField(value = "tag_name")
     private String name;
 
     /**
      * 创建时间
      */
+    @TableField(value = "tag_create_time")
     private Date createTime;
 
     /**
      * 0正常，1删除
      */
+    @TableField(value = "tag_deleted")
     private Integer deleted;
 
     @TableField(exist = false)

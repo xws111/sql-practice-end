@@ -19,9 +19,6 @@ mybatis-plus:
       logic-not-delete-value: 0
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    persist-authorization: true
+knife4j:
+  enable: true
 

@@ -16,12 +16,13 @@ public class QuestionTag implements Serializable {
     /**
      * 问题id
      */
-    @TableId
+    @TableId(value = "question_tag_question_id")
     private Long questionId;
 
     /**
      * 标签id
      */
+    @TableField(value = "question_tag_tag_id")
     private Integer tagId;
 
     @TableField(exist = false)

@@ -5,12 +5,12 @@ import com.xws111.sqlpractice.exception.BussinessException;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.UserVO;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,8 +22,7 @@ import static com.xws111.sqlpractice.constant.UserConstant.USER_LOGIN_STATE;
  * @createDate 2024-04-27 14:22:46
  */
 
-@FeignClient(name = "sql-practice-user-service", path = "/api/user/inner" +
-        "")
+@FeignClient(name = "sql-practice-user-service", path = "/api/user/inner")
 public interface UserFeignClient {
     /**
      * 根据 id 获取用户

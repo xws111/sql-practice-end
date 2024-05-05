@@ -7,7 +7,7 @@ import com.xws111.sqlpractice.model.dto.user.UserQueryRequest;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.model.vo.UserVO;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 

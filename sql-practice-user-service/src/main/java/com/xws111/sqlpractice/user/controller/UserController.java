@@ -16,8 +16,8 @@ import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpractice.user.service.UserService;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping
-@CrossOrigin(origins="http://localhost:8000", allowCredentials = "true")
+//@CrossOrigin(origins="http://localhost:8000", allowCredentials = "true")
 public class UserController {
     @Resource
     private UserService userService;
