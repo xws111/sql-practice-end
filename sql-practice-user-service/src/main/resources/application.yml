@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: sql-practice-user-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Dbase2122.
+    url: jdbc:mysql://139.224.101.197:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+server:
+  port: 8101
+  servlet:
+    context-path: /api/user
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: flag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    persist-authorization: true
+

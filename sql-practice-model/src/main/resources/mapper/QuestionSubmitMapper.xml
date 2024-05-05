@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xws111.sqlpractice.mapper.QuestionSubmitMapper">
+
+    <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.QuestionSubmit">
+            <id property="id" column="question_submit_id" jdbcType="BIGINT"/>
+            <result property="language" column="question_submit_language" jdbcType="VARCHAR"/>
+            <result property="code" column="question_submit_code" jdbcType="VARCHAR"/>
+            <result property="result" column="question_submit_result" jdbcType="VARCHAR"/>
+            <result property="status" column="question_submit_status" jdbcType="TINYINT"/>
+            <result property="questionId" column="question_submit_question_id" jdbcType="BIGINT"/>
+            <result property="userId" column="question_submit_user_id" jdbcType="BIGINT"/>
+            <result property="createTime" column="question_submit_create_time" jdbcType="TIMESTAMP"/>
+            <result property="deleted" column="question_submit_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        question_submit_id,question_submit_language,question_submit_code,
+        question_submit_result,question_submit_status,question_submit_question_id,
+        question_submit_user_id,question_submit_create_time,question_submit_deleted
+    </sql>
+</mapper>
