@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @Slf4j
 @RequestMapping
-//@CrossOrigin(origins="http://localhost:8000", allowCredentials = "true")
 public class UserController {
     @Resource
     private UserService userService;
@@ -42,13 +42,13 @@ public class UserController {
         if (userRegisterRequest == null) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userRegisterRequest.getUserAccount();
-        String userPassword = userRegisterRequest.getUserPassword();
+        String account = userRegisterRequest.getAccount();
+        String password = userRegisterRequest.getPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
-        if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
+        if (StringUtils.isAnyBlank(account, password, checkPassword)) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }
-        long result = userService.userRegister(userAccount, userPassword, checkPassword);
+        long result = userService.userRegister(account, password, checkPassword);
         return ResultUtils.success(result);
     }
 
@@ -57,12 +57,12 @@ public class UserController {
         if (userLoginRequest == null) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }
-        String userAccount = userLoginRequest.getUserAccount();
-        String userPassword = userLoginRequest.getUserPassword();
-        if (org.apache.commons.lang3.StringUtils.isAnyBlank(userAccount, userPassword)) {
+        String account = userLoginRequest.getAccount();
+        String password = userLoginRequest.getPassword();
+        if (org.apache.commons.lang3.StringUtils.isAnyBlank(account, password)) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+        LoginUserVO loginUserVO = userService.userLogin(account, password, request);
         return ResultUtils.success(loginUserVO);
     }
     /**
@@ -86,7 +86,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/get/login")
+    @GetMapping("/current")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
@@ -140,7 +140,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/update")
+    @PostMapping("/update/admin")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
                                             HttpServletRequest request) {
@@ -238,7 +238,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @PostMapping("/update/my")
+    @PostMapping("/update")
     public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {

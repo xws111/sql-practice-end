@@ -6,7 +6,7 @@
 
     <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.QuestionTag">
             <id property="questionId" column="question_id" jdbcType="BIGINT"/>
-            <id property="tagId" column="tag_id" jdbcType="SMALLINT"/>
+            <id property="tagId" column="tag_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">

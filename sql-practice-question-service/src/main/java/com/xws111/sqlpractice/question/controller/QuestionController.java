@@ -18,6 +18,7 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.QuestionTag;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
+import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 import com.xws111.sqlpractice.question.service.QuestionService;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
@@ -31,6 +32,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,7 +146,7 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("/get")
+    @GetMapping("/get/admin")
     public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
@@ -167,7 +169,7 @@ public class QuestionController {
      * @param id
      * @return
      */
-    @GetMapping("/get/vo")
+    @GetMapping("/get")
     public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
@@ -176,68 +178,46 @@ public class QuestionController {
         if (question == null) {
             throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        return ResultUtils.success(questionService.getQuestionVO(question, request));
+
+        return ResultUtils.success(questionService.getQuestionVOById(id, request));
     }
 
     /**
      * 分页获取列表（封装类）
      *
-     * @param questionQueryRequest
+     * @param questionListRequest
      * @param request
      * @return
      */
     @PostMapping("/list/page/vo")
-    public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
-                                                               HttpServletRequest request) {
-        long current = questionQueryRequest.getCurrent();
-        long size = questionQueryRequest.getPageSize();
+    public BaseResponse<Page<QuestionListVO>> listQuestionVOByPage(@RequestBody QuestionListRequest questionListRequest,
+                                                                   HttpServletRequest request) {
+        long current = questionListRequest.getCurrent();
+        long size = questionListRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+                questionService.getQueryWrapper(questionListRequest));
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
 
     }
 
-    /**
-     * 分页获取当前用户创建的资源列表
-     *
-     * @param questionQueryRequest
-     * @param request
-     * @return
-     */
-    @PostMapping("/my/list/page/vo")
-    public BaseResponse<Page<QuestionVO>> listMyQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
-                                                                 HttpServletRequest request) {
-        if (questionQueryRequest == null) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR);
-        }
-        User loginUser = userFeignClient.getLoginUser(request);
-        questionQueryRequest.setUserId(loginUser.getId());
-        long current = questionQueryRequest.getCurrent();
-        long size = questionQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
-        return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
-    }
 
     /**
      * 分页获取题目列表（仅管理员）
      *
-     * @param questionQueryRequest
+     * @param questionListRequest
      * @param request
      * @return
      */
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
+    public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionListRequest questionListRequest,
                                                            HttpServletRequest request) {
-        long current = questionQueryRequest.getCurrent();
-        long size = questionQueryRequest.getPageSize();
+        long current = questionListRequest.getCurrent();
+        long size = questionListRequest.getPageSize();
         Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionQueryRequest));
+                questionService.getQueryWrapper(questionListRequest));
         return ResultUtils.success(questionPage);
     }
 
@@ -277,6 +257,13 @@ public class QuestionController {
         return ResultUtils.success(result);
     }
 
+    @GetMapping ("/list")
+    public BaseResponse<List<QuestionListVO>> getQuestionList(Long current, Long size) {
+        List<QuestionListVO> list = new ArrayList<>();
+        list = questionService.getQuestionList(current, size);
+        return ResultUtils.success(list);
+    }
+
     /**
      * 提交题目
      *
@@ -284,8 +271,8 @@ public class QuestionController {
      * @param request
      * @return 提交记录的 id
      */
-    @PostMapping("/question_submit/do")
-    public BaseResponse<Long> doQuestionSubmit(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
+    @PostMapping("/submit")
+    public BaseResponse<Long> submitQuestion(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
                                                HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
@@ -316,6 +303,5 @@ public class QuestionController {
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
 
     }
-
 
 }

@@ -1,4 +1,13 @@
 spring:
+  #session失效时间(分钟)
+  session:
+    timeout: 43776
+    store-type: redis
+  #redis
+  redis:
+    port: 6379
+    host: 139.224.101.197
+    database: 0
   cloud:
     nacos:
       discovery:

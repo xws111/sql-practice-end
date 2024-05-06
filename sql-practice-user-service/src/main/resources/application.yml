@@ -1,16 +1,30 @@
 spring:
   application:
     name: sql-practice-user-service
-
+  #session失效时间(分钟)
+  session:
+    timeout: 43776
+    store-type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: Dbase2122.
     url: jdbc:mysql://139.224.101.197:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+  #redis
+  redis:
+    port: 6379
+    host: 139.224.101.197
+    database: 0
+  jackson:
+    date-format: yyyy-MM-dd
+    timeZone: Asia/Shanghai
 server:
   port: 8101
   servlet:
     context-path: /api/user
+    session:
+      cookie:
+        path: /api
 mybatis-plus:
   global-config:
     db-config:
@@ -21,4 +35,3 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 knife4j:
   enable: true
-

@@ -5,12 +5,14 @@
 <mapper namespace="com.xws111.sqlpractice.mapper.TagMapper">
 
     <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.Tag">
-            <id property="id" column="tag_id" jdbcType="SMALLINT"/>
-            <result property="name" column="tag_name" jdbcType="VARCHAR"/>
-            <result property="createTime" column="tag_create_time" jdbcType="TIMESTAMP"/>
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        tag_id,tag_name,tag_create_time
+        id,name,create_time,
+        is_deleted
     </sql>
 </mapper>

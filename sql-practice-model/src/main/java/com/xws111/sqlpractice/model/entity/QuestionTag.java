@@ -1,5 +1,6 @@
 package com.xws111.sqlpractice.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -16,13 +17,12 @@ public class QuestionTag implements Serializable {
     /**
      * 问题id
      */
-    @TableId(value = "question_tag_question_id")
+    @TableId
     private Long questionId;
 
     /**
      * 标签id
      */
-    @TableField(value = "question_tag_tag_id")
     private Integer tagId;
 
     @TableField(exist = false)

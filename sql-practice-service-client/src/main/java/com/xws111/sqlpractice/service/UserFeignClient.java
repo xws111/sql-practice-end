@@ -3,7 +3,6 @@ package com.xws111.sqlpractice.service;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BussinessException;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,6 +23,7 @@ import static com.xws111.sqlpractice.constant.UserConstant.USER_LOGIN_STATE;
 
 @FeignClient(name = "sql-practice-user-service", path = "/api/user/inner")
 public interface UserFeignClient {
+    String USER_LOGIN_STATE = "loginState";
     /**
      * 根据 id 获取用户
      *

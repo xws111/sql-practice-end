@@ -3,10 +3,13 @@ package com.xws111.sqlpractice.question.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.xws111.sqlpractice.model.dto.question.QuestionQueryRequest;
+import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
+import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author xg
@@ -26,19 +29,19 @@ public interface QuestionService extends IService<Question> {
     /**
      * 获取查询条件
      *
-     * @param questionQueryRequest
+     * @param questionListRequest
      * @return
      */
-    QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest);
+    QueryWrapper<Question> getQueryWrapper(QuestionListRequest questionListRequest);
 
     /**
      * 获取题目封装
      *
-     * @param question
+     * @param id
      * @param request
      * @return
      */
-    QuestionVO getQuestionVO(Question question, HttpServletRequest request);
+    QuestionVO getQuestionVOById(Long id, HttpServletRequest request);
 
     /**
      * 分页获取题目封装
@@ -47,6 +50,7 @@ public interface QuestionService extends IService<Question> {
      * @param request
      * @return
      */
-    Page<QuestionVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
+    Page<QuestionListVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
 
+    List<QuestionListVO> getQuestionList(long current, long size);
 }

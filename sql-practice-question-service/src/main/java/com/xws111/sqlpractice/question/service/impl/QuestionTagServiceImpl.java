@@ -2,8 +2,8 @@ package com.xws111.sqlpractice.question.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xws111.sqlpractice.mapper.QuestionTagMapper;
-import com.xws111.sqlpractice.question.service.QuestionTagService;
 import com.xws111.sqlpractice.model.entity.QuestionTag;
+import com.xws111.sqlpractice.question.service.QuestionTagService;
 import org.springframework.stereotype.Service;
 
 /**

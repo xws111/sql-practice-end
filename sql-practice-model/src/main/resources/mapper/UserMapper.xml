@@ -5,20 +5,20 @@
 <mapper namespace="com.xws111.sqlpractice.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.User">
-            <id property="id" column="user_id" jdbcType="BIGINT"/>
-            <result property="username" column="user_username" jdbcType="VARCHAR"/>
-            <result property="account" column="user_account" jdbcType="VARCHAR"/>
-            <result property="password" column="user_password" jdbcType="VARCHAR"/>
-            <result property="avatarUrl" column="user_avatar_url" jdbcType="VARCHAR"/>
-            <result property="role" column="user_role" jdbcType="SMALLINT"/>
-            <result property="createTime" column="user_create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="user_update_time" jdbcType="TIMESTAMP"/>
-            <result property="deleted" column="user_deleted" jdbcType="SMALLINT"/>
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="account" column="account" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+            <result property="role" column="role" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        user_id,user_username,user_account,
-        user_password,user_avatar_url,user_role,
-        user_create_time,user_update_time,user_deleted
+        id,username,account,
+        password,avatar_url,role,
+        create_time,update_time,is_deleted
     </sql>
 </mapper>

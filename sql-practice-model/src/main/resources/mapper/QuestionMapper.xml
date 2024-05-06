@@ -5,23 +5,23 @@
 <mapper namespace="com.xws111.sqlpractice.mapper.QuestionMapper">
 
     <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.Question">
-            <id property="id" column="question_id" jdbcType="BIGINT"/>
-            <result property="title" column="question_title" jdbcType="VARCHAR"/>
-            <result property="description" column="question_description" jdbcType="VARCHAR"/>
-            <result property="answer" column="question_answer" jdbcType="VARCHAR"/>
-            <result property="timeLimit" column="question_time_limit" jdbcType="SMALLINT"/>
-            <result property="favorNum" column="question_favor_num" jdbcType="INTEGER"/>
-            <result property="submitNum" column="question_submit_num" jdbcType="BIGINT"/>
-            <result property="accepted" column="question_accepted" jdbcType="BIGINT"/>
-            <result property="createTime" column="question_create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="question_update_time" jdbcType="TIMESTAMP"/>
-            <result property="deleted" column="question_deleted" jdbcType="TINYINT"/>
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="answer" column="answer" jdbcType="VARCHAR"/>
+            <result property="timeLimit" column="time_limit" jdbcType="INTEGER"/>
+            <result property="favorNum" column="favor_num" jdbcType="INTEGER"/>
+            <result property="submitNum" column="submit_num" jdbcType="BIGINT"/>
+            <result property="accepted" column="accepted" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        question_id,question_title,question_description,
-        question_answer,question_time_limit,question_favor_num,
-        question_submit_num,question_accepted,question_create_time,
-        question_update_time,question_deleted
+        id,title,content,
+        answer,time_limit,favor_num,
+        submit_num,accepted,create_time,
+        update_time,is_deleted
     </sql>
 </mapper>

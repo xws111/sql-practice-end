@@ -6,11 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
+import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
+import com.xws111.sqlpractice.question.rocketmq.MQProducer;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
-import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
 * @author xg
@@ -21,9 +24,24 @@ import org.springframework.stereotype.Service;
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
     implements QuestionSubmitService {
 
+    @Resource
+    MQProducer mqProducer;
+
     @Override
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
-        return 0;
+        long questionId = questionSubmitAddRequest.getQuestionId();
+        String code = questionSubmitAddRequest.getCode();
+        String language = questionSubmitAddRequest.getLanguage();
+        Long userId = loginUser.getId();
+        QuestionSubmit questionSubmit = new QuestionSubmit();
+        questionSubmit.setQuestionId(questionId);
+        questionSubmit.setCode(code);
+        questionSubmit.setLanguage(language);
+        questionSubmit.setUserId(userId);
+        this.save(questionSubmit);
+        long id = questionSubmit.getId();
+        mqProducer.send(id);
+        return id;
     }
 
     @Override

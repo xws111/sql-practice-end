@@ -1,7 +1,19 @@
 spring:
+
   application:
     name: sql-practice-judge-service
-
+  #session失效时间(分钟)
+  session:
+    timeout: 43776
+    store-type: redis
+  #redis
+  redis:
+    port: 6379
+    host: 139.224.101.197
+    database: 0
+  jackson:
+    date-format: yyyy-MM-dd
+    timeZone: Asia/Shanghai
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
