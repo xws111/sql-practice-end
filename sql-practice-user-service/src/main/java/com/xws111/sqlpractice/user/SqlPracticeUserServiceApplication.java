@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @Description:
@@ -19,6 +20,7 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 @EnableDiscoveryClient
 @MapperScan("com.xws111.sqlpractice.mapper")
 @EnableFeignClients(basePackages = "com.xws111.sqlpractice.service")
+@ComponentScan("com.xws111")
 public class SqlPracticeUserServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(SqlPracticeUserServiceApplication.class);

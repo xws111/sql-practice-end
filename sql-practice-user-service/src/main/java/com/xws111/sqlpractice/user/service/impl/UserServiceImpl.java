@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
-import com.xws111.sqlpractice.exception.BussinessException;
+import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.UserMapper;
 import com.xws111.sqlpractice.model.dto.user.UserQueryRequest;
 import com.xws111.sqlpractice.model.entity.User;
@@ -19,6 +19,7 @@ import com.xws111.sqlpractice.user.service.UserService;
 import com.xws111.sqlpractice.utils.SqlUtils;
 
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -29,34 +30,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
-* @author xg
-* @description 针对表【user(用户表)】的数据库操作Service实现
-* @createDate 2024-05-03 22:04:52
-*/
+ * @author xg
+ * @description 针对表【user(用户表)】的数据库操作Service实现
+ * @createDate 2024-05-03 22:04:52
+ */
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService {
+        implements UserService {
     /**
      * 盐值，混淆密码
      */
     private static final String SALT = "xws111";
 
     @Override
-    public long userRegister(String account, String password, String checkPassword) {
+    public Long userRegister(String account, String password, String checkPassword) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password, checkPassword)) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (account.length() < 4) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
         if (password.length() < 8 || checkPassword.length() < 8) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
         if (!password.equals(checkPassword)) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
         }
         synchronized (account.intern()) {
             // 账户不能重复
@@ -64,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             queryWrapper.eq("account", account);
             long count = this.baseMapper.selectCount(queryWrapper);
             if (count > 0) {
-                throw new BussinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             // 2. 加密
             String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
@@ -74,7 +75,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             user.setPassword(encryptPassword);
             boolean saveResult = this.save(user);
             if (!saveResult) {
-                throw new BussinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
             return user.getId();
         }
@@ -84,13 +85,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public LoginUserVO userLogin(String account, String password, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password)) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
         if (account.length() < 4) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "账号错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
         }
         if (password.length() < 8) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "密码错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
@@ -102,11 +103,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         // 用户不存在
         if (user == null) {
             log.info("user login failed, account cannot match password");
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         // 3. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
+
     }
 
     /**
@@ -121,13 +123,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            throw new BussinessException(ErrorCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
 //        long userId = currentUser.getId();
 //        currentUser = this.getById(userId);
 //        if (currentUser == null) {
-//            throw new BussinessException(ErrorCode.NOT_LOGIN_ERROR);
+//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
 //        }
         return currentUser;
     }
@@ -144,11 +146,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            return null;
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
-        return this.getById(userId);
+//        long userId = currentUser.getId();
+//        return this.getById(userId);
+        return currentUser;
     }
 
     /**
@@ -178,7 +181,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public boolean userLogout(HttpServletRequest request) {
         if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
-            throw new BussinessException(ErrorCode.OPERATION_ERROR, "未登录");
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
         }
         // 移除登录态
         request.getSession().removeAttribute(USER_LOGIN_STATE);
@@ -216,7 +219,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Wrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         Long id = userQueryRequest.getId();
         String unionId = userQueryRequest.getUnionId();

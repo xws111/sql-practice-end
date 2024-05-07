@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.xws111.sqlpractice.common.ErrorCode;
-import com.xws111.sqlpractice.exception.BussinessException;
+import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.judge.json.JsonUtils;
 import com.xws111.sqlpractice.judge.service.JudgeService;
-import com.xws111.sqlpractice.model.dto.docker.ApiResponse;
 import com.xws111.sqlpractice.model.dto.docker.ExecuteResult;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
@@ -78,7 +77,7 @@ public class JudgeServiceImpl implements JudgeService {
             JsonUtils.responseToExecuteResult(response.getBody(), executeResult);
             return executeResult;
         } else {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "运行出错，请检查代码");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "运行出错，请检查代码");
         }
     }
     public static boolean compareJsonStrings(String json1, String json2) {

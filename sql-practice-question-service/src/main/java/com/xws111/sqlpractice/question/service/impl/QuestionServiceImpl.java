@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
-import com.xws111.sqlpractice.exception.BussinessException;
+import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.TagMapper;
@@ -18,7 +18,6 @@ import com.xws111.sqlpractice.model.vo.QuestionTagVO;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 import com.xws111.sqlpractice.question.service.QuestionService;
-import com.xws111.sqlpractice.question.service.TagService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import com.xws111.sqlpractice.utils.SqlUtils;
 
@@ -57,7 +56,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public void validQuestion(Question question, boolean add) {
         if (question == null) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         String title = question.getTitle();
         String description = question.getContent();
@@ -69,13 +68,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         }
         // 有参数则校验
         if (StringUtils.isNotBlank(title) && title.length() > 80) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "标题过长");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "标题过长");
         }
         if (StringUtils.isNotBlank(description) && description.length() > 8192) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "内容过长");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");
         }
         if (StringUtils.isNotBlank(answer) && answer.length() > 8192) {
-            throw new BussinessException(ErrorCode.PARAMS_ERROR, "答案过长");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "答案过长");
         }
     }
 
@@ -108,7 +107,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     public QuestionVO getQuestionVOById(Long id, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
         if (user == null) {
-            throw new BussinessException(ErrorCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         QuestionVO questionVO = questionMapper.getQuestionContent(id);
         List<String> tags = tagMapper.getTagNamesByQuestionId(id);
@@ -143,8 +142,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public List<QuestionListVO> getQuestionList(long current, long size) {
-        Page<Question> page = new Page<>(current, size);
+    public Page<QuestionListVO> getQuestionList(long current, long size) {
+        Page<QuestionListVO> page = new Page<>(current, size);
 
         List<QuestionListVO> questionListVO = questionMapper.getAllQuestions();
         List<QuestionTagVO> tags = questionMapper.getAllQuestionTags();
@@ -159,7 +158,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         for (QuestionListVO question : questionListVO) {
             question.setTags(questionToTags.getOrDefault(question.getId(), Collections.emptyList()));
         }
-        return questionListVO;
+        page.setRecords(questionListVO);
+        return page;
     }
 
 }

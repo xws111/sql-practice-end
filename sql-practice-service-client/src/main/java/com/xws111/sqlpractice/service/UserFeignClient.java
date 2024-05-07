@@ -1,7 +1,7 @@
 package com.xws111.sqlpractice.service;
 
 import com.xws111.sqlpractice.common.ErrorCode;
-import com.xws111.sqlpractice.exception.BussinessException;
+import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.UserVO;
 import org.springframework.beans.BeanUtils;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
-
-import static com.xws111.sqlpractice.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * @author xg
@@ -53,7 +51,7 @@ public interface UserFeignClient {
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            throw new BussinessException(ErrorCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 可以考虑在这里做全局权限校验
         return currentUser;

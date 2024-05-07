@@ -3,7 +3,7 @@ spring:
     name: sql-practice-user-service
   #session失效时间(分钟)
   session:
-    timeout: 43776
+    timeout: 4377600
     store-type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
