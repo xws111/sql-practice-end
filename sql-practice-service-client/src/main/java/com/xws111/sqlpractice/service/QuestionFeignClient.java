@@ -4,6 +4,9 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Description:
@@ -13,14 +16,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @FeignClient(name = "sql-practice-question-service", path = "/api/question/inner")
 public interface QuestionFeignClient {
-    @GetMapping("/get")
-    QuestionSubmit getQuestionSubmitById(Long id);
+    @PostMapping("/get")
+    QuestionSubmit getQuestionSubmitById(@RequestParam("id") long id);
 
-    @GetMapping("/answer")
-    String getAnswerById(Long id);
+    @PostMapping("/answer")
+    String getAnswerById(@RequestParam("id") Long id);
     /**
      * 判题结束，更新提交记录状态及结果
      */
-    @GetMapping("/update-result")
-    void updateSubmitResult(JudgeInfo judgeInfo);
+    @PostMapping("/update-result")
+    void updateSubmitResult(@RequestBody JudgeInfo judgeInfo);
 }

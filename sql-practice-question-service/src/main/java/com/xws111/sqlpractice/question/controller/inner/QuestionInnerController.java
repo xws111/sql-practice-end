@@ -7,9 +7,7 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -26,15 +24,15 @@ public class QuestionInnerController implements QuestionFeignClient {
      * @param id
      * @return
      */
-    @GetMapping("/get")
-    public QuestionSubmit getQuestionSubmitById(Long id) {
+    @PostMapping("/get")
+    public QuestionSubmit getQuestionSubmitById(@RequestParam("id") long id) {
         if (id < 0) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }
         return questionSubmitService.getById(id);
     }
-    @GetMapping("/answer")
-    public String getAnswerById(Long id) {
+    @PostMapping("/answer")
+    public String getAnswerById(@RequestParam("id") Long id) {
         if (id < 0) {
             throw new BussinessException(ErrorCode.PARAMS_ERROR);
         }

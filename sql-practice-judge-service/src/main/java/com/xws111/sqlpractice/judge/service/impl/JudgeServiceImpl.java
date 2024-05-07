@@ -5,11 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BussinessException;
+import com.xws111.sqlpractice.judge.json.JsonUtils;
 import com.xws111.sqlpractice.judge.service.JudgeService;
+import com.xws111.sqlpractice.model.dto.docker.ApiResponse;
 import com.xws111.sqlpractice.model.dto.docker.ExecuteResult;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import java.util.Map;
  * @Version 1.0
  * @Author xg
  */
+@Slf4j
 @Service
 public class JudgeServiceImpl implements JudgeService {
     @Autowired
@@ -42,34 +46,37 @@ public class JudgeServiceImpl implements JudgeService {
         // 3. 将返回的结果进行判断是否正确
         String jsonResult = executeResult.getJsonResult();
         // 4. 判题
-        String answer = questionFeignClient.getAnswerById(id);
+        String answer = questionFeignClient.getAnswerById(questionSubmit.getQuestionId());
         boolean result = compareJsonStrings(jsonResult, answer);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setTime(executeResult.getTime());
         judgeInfo.setQueryResult(executeResult.getMessage());
         judgeInfo.setId(id);
         if (result) {
-            judgeInfo.setResult("完全正确恭喜你又进一步！");
+            log.info("答案正确！");
+            judgeInfo.setResult("完全正确, 恭喜你又进一步！");
         } else {
+            log.info("答案错误！");
             judgeInfo.setResult("错误！动动🧠！");
         }
         // 5. 更新数据库结果
+        log.info("已更新数据库中的提交记录。");
         questionFeignClient.updateSubmitResult(judgeInfo);
         return judgeInfo;
     }
 
     private ExecuteResult postToRemoteApi(String sql) {
         // 设置请求 URL 和请求体
-        String url = "http://remote-server-url/api/endpoint";
+        String url = "http://117.72.10.224:8080/execute";
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("sql", "value1");
+        requestBody.put("inputSQL", sql);
         // 发起 POST 请求，接收响应
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestBody, String.class);
         // 检查请求是否成功
         if (response.getStatusCode().is2xxSuccessful()) {
-            // 使用 Gson 将 JSON 字符串转换为自定义对象
-            Gson gson = new Gson();
-            return gson.fromJson(response.getBody(), ExecuteResult.class);
+            ExecuteResult executeResult = new ExecuteResult();
+            JsonUtils.responseToExecuteResult(response.getBody(), executeResult);
+            return executeResult;
         } else {
             throw new BussinessException(ErrorCode.PARAMS_ERROR, "运行出错，请检查代码");
         }

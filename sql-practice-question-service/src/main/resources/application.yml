@@ -20,14 +20,17 @@ spring:
     password: Dbase2122.
     url: jdbc:mysql://139.224.101.197:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
 rocketmq:
-  name-server: 139.224.101.197
+  name-server: 139.224.101.197:9876
   producer:
     group: producer
-    send-message-timeout: 3000
+    send-message-timeout: 30000
 server:
   port: 8103
   servlet:
     context-path: /api/question
+    session:
+      cookie:
+        path: /api
 mybatis-plus:
   global-config:
     db-config:

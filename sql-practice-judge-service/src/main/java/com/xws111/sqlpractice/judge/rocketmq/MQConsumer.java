@@ -16,6 +16,7 @@ public class MQConsumer implements RocketMQListener<Long> {
     JudgeService judgeService;
     @Override
     public void onMessage(Long id) {
+        log.info("judging...");
         judgeService.judge(id);
     }
 }
