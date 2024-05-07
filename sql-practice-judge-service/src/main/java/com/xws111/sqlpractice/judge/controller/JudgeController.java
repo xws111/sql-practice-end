@@ -18,8 +18,8 @@ public class JudgeController {
     @Resource
     JudgeService judgeService;
 
-    @PostMapping("/judge")
-    public JudgeInfo judge(String sql) {
-        return judgeService.judge(sql);
-    }
+//    @PostMapping("/judge")
+//    public JudgeInfo judge(Long l) {
+//        return judgeService.judge(sql);
+//    }
 }

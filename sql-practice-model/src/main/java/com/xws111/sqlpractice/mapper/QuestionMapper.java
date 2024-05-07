@@ -7,6 +7,7 @@ import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -32,6 +33,9 @@ public interface QuestionMapper extends BaseMapper<Question> {
         "WHERE q.id = #{id}"
     )
     QuestionVO getQuestionContent(@Param("id") Long id);
+
+    @Select("SELECT question.answer FROM question WHERE id = #{id}")
+    String getQuestionAnswerById(@Param("id") Long id);
 
 }
 

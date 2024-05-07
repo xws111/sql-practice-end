@@ -22,7 +22,8 @@ spring:
 rocketmq:
   name-server: 139.224.101.197
   producer:
-    group:
+    group: producer
+    send-message-timeout: 3000
 server:
   port: 8103
   servlet:

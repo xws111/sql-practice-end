@@ -38,9 +38,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         questionSubmit.setCode(code);
         questionSubmit.setLanguage(language);
         questionSubmit.setUserId(userId);
+        questionSubmit.setStatus(1);
         this.save(questionSubmit);
         long id = questionSubmit.getId();
+        //更改状态为判题中
         mqProducer.send(id);
+
         return id;
     }
 

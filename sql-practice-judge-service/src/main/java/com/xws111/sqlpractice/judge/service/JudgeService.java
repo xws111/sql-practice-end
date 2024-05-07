@@ -12,5 +12,5 @@ public interface JudgeService {
     /**
      * 判题
      */
-    JudgeInfo judge(String string);
+    JudgeInfo judge(Long id);
 }

@@ -19,6 +19,11 @@ spring:
     username: root
     password: Dbase2122.
     url: jdbc:mysql://139.224.101.197:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+rocketmq:
+  name-server: 139.224.101.197
+  producer:
+    group: consumer
+    send-message-timeout: 3000
 server:
   port: 8102
   servlet:
