@@ -1,5 +1,6 @@
 package com.xws111.sqlpractice.judge.service;
 
+import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
 
 /**
@@ -13,4 +14,5 @@ public interface JudgeService {
      * 判题
      */
     JudgeInfo judge(Long id);
+
 }

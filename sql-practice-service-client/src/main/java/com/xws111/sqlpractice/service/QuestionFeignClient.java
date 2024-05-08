@@ -26,4 +26,8 @@ public interface QuestionFeignClient {
      */
     @PostMapping("/update-result")
     void updateSubmitResult(@RequestBody JudgeInfo judgeInfo);
+
+    @PostMapping("/increment-accepted")
+    void incrementAccepted(@RequestBody Long id);
+
 }

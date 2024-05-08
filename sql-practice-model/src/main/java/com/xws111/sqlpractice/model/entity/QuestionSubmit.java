@@ -33,6 +33,10 @@ public class QuestionSubmit implements Serializable {
      * 提交结果
      */
     private String result;
+    /**
+     * 得到输出
+     */
+    private String output;
 
     /**
      * 提交状态 

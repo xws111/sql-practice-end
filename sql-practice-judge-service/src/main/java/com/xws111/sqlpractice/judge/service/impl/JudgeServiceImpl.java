@@ -7,6 +7,8 @@ import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.judge.json.JsonUtils;
 import com.xws111.sqlpractice.judge.service.JudgeService;
+import com.xws111.sqlpractice.mapper.QuestionMapper;
+import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.docker.ExecuteResult;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
@@ -35,19 +37,29 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private QuestionFeignClient questionFeignClient;
 
+
+
     @Override
     public JudgeInfo judge(Long id) {
+        JudgeInfo judgeInfo = new JudgeInfo();
         // 1. 通过题目 id 拿到提交信息
         QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(id);
         // 2. 将题目代码放入远程沙箱跑
         String code = questionSubmit.getCode();
         ExecuteResult executeResult = postToRemoteApi(code);
+        if (executeResult.getJsonResult() == null) {
+            judgeInfo.setResult("sql 语法错误！");
+            judgeInfo.setId(id);
+            log.info("已更新数据库中的提交记录。");
+            questionFeignClient.updateSubmitResult(judgeInfo);
+            return judgeInfo;
+        }
         // 3. 将返回的结果进行判断是否正确
         String jsonResult = executeResult.getJsonResult();
         // 4. 判题
         String answer = questionFeignClient.getAnswerById(questionSubmit.getQuestionId());
         boolean result = compareJsonStrings(jsonResult, answer);
-        JudgeInfo judgeInfo = new JudgeInfo();
+
         judgeInfo.setTime(executeResult.getTime());
         judgeInfo.setQueryResult(executeResult.getMessage());
         judgeInfo.setId(id);
@@ -66,7 +78,8 @@ public class JudgeServiceImpl implements JudgeService {
 
     private ExecuteResult postToRemoteApi(String sql) {
         // 设置请求 URL 和请求体
-        String url = "http://117.72.10.224:8080/execute";
+        String url = "http://38.181.145.188:8080/execute";
+//        String url = "http://192.168.17.128:8080/execute";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("inputSQL", sql);
         // 发起 POST 请求，接收响应

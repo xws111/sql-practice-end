@@ -1,11 +1,10 @@
 package com.xws111.sqlpractice.judge.controller;
 
 import com.xws111.sqlpractice.judge.service.JudgeService;
+import com.xws111.sqlpractice.mapper.QuestionMapper;
+import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 

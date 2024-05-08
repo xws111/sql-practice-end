@@ -8,6 +8,9 @@ import com.xws111.sqlpractice.model.vo.QuestionVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
@@ -18,6 +21,7 @@ import java.util.List;
 * @Entity generator.domain.Question
 */
 public interface QuestionMapper extends BaseMapper<Question> {
+
 
     @Select("SELECT q.id as id, q.title as title, q.submit_num as submitNum, q.accepted as accepted " +
             "FROM question q")
@@ -36,6 +40,12 @@ public interface QuestionMapper extends BaseMapper<Question> {
 
     @Select("SELECT question.answer FROM question WHERE id = #{id}")
     String getQuestionAnswerById(@Param("id") Long id);
+
+    @Update("UPDATE question SET submit_num = question.submit_num + 1 WHERE id = #{questionId}")
+    void incrementSubmitCount(@Param("questionId") Long questionId);
+
+    @Update("UPDATE question SET accepted = question.accepted + 1 WHERE id = #{questionId}")
+    void incrementAcceptedCount(@Param("questionId") Long questionId);
 
 }
 

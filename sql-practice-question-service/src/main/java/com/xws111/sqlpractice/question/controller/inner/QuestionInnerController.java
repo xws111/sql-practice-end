@@ -54,7 +54,17 @@ public class QuestionInnerController implements QuestionFeignClient {
         questionSubmit.setResult(judgeInfo.getResult());
         questionSubmit.setStatus(2);
         questionSubmit.setId(judgeInfo.getId());
+        questionSubmit.setOutput(judgeInfo.getQueryResult());
         questionSubmitService.updateById(questionSubmit);
+    }
+
+    /**
+     * 通过数加一
+     * @param id
+     */
+    @Override
+    public void incrementAccepted(Long id) {
+        questionMapper.incrementAcceptedCount(id);
     }
 
 

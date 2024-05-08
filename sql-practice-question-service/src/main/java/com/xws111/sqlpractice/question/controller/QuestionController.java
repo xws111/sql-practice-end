@@ -28,6 +28,8 @@ import com.xws111.sqlpractice.service.UserFeignClient;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -275,7 +277,10 @@ public class QuestionController {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // 登录才能点赞
+        if (StringUtils.isBlank(questionSubmitAddRequest.getCode())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "不能提交空语句！");
+        }
+        // 登录才提交
         final User loginUser = userFeignClient.getLoginUser(request);
         long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(questionSubmitId);
@@ -300,6 +305,14 @@ public class QuestionController {
         // 返回脱敏信息
         return ResultUtils.success(questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage, loginUser));
 
+    }
+
+    /**
+     * 获取判题结果
+     */
+    @PostMapping("/result")
+    public QuestionSubmit getSubmitResult(long id) {
+        return questionSubmitService.getById(id);
     }
 
 
