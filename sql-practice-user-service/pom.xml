@@ -68,7 +68,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.xws111.sqlpractice.user.SqlPracticeUserServiceApplication</mainClass>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>

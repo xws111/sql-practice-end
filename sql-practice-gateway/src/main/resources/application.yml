@@ -35,7 +35,10 @@ spring:
     web-application-type: reactive
 server:
   port: 8100
-
+  servlet:
+    session:
+      cookie:
+        path: /api
 knife4j:
   gateway:
     # ① 第一个配置，开启gateway聚合组件

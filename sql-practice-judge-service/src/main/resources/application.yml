@@ -9,6 +9,7 @@ spring:
   #redis
   redis:
     port: 6379
+#    host: 172.31.24.211
     host: 139.224.101.197
     database: 0
   jackson:

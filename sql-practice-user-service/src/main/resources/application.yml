@@ -14,6 +14,7 @@ spring:
   redis:
     port: 6379
     host: 139.224.101.197
+#    host: 172.31.24.211
     database: 0
   jackson:
     date-format: yyyy-MM-dd

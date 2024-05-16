@@ -29,7 +29,7 @@ public class MQProducer {
      * 普通发送（这里的参数对象User可以随意定义，可以发送个对象，也可以是字符串等）
      */
     public void send(Long id) {
-        log.info("发送提交id：" + id + "到消息队列");
+//        log.info("发送提交id：" + id + "到消息队列");
         rocketMQTemplate.convertAndSend(topic + ":submitId", id);
         //        rocketMQTemplate.send(topic + ":tag1", MessageBuilder.withPayload(user).build()); // 等价于上面一行
     }

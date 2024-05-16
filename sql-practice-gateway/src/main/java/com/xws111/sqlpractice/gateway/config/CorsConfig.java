@@ -1,11 +1,17 @@
 package com.xws111.sqlpractice.gateway.config;
 
+import io.netty.handler.codec.http.cookie.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.util.pattern.PathPatternParser;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 
@@ -18,10 +24,11 @@ public class CorsConfig {
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
         // todo 实际改为线上真实域名、本地域名
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        config.setAllowedOriginPatterns(Arrays.asList("http://139.224.188.53", "http://localhost:8000"));
         config.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
         source.registerCorsConfiguration("/**", config);
         return new CorsWebFilter(source);
     }
+
 }
