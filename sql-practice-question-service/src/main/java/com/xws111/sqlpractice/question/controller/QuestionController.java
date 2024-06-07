@@ -27,6 +27,8 @@ import com.xws111.sqlpractice.question.service.TagService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.util.StringUtil;
@@ -71,6 +73,7 @@ public class QuestionController {
      * @param request
      * @return
      */
+    @ApiOperation("管理员新增问题接口")
     @PostMapping("/add")
     public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
         if (questionAddRequest == null) {
@@ -98,6 +101,7 @@ public class QuestionController {
      * @param request
      * @return
      */
+    @ApiOperation("管理员删除问题接口")
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
@@ -122,6 +126,7 @@ public class QuestionController {
      * @param questionUpdateRequest
      * @return
      */
+    @ApiOperation("管理员更新问题接口")
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
@@ -147,6 +152,7 @@ public class QuestionController {
      * @param id
      * @return
      */
+    @ApiOperation("管理员获取指定 id 问题接口")
     @GetMapping("/get/admin")
     public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
         if (id <= 0) {
@@ -170,6 +176,7 @@ public class QuestionController {
      * @param id
      * @return
      */
+    @ApiOperation("用户获取指定 id 问题接口")
     @GetMapping("/get")
     public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         if (id <= 0) {
@@ -190,6 +197,7 @@ public class QuestionController {
      * @param request
      * @return
      */
+    @ApiOperation("获取问题列表接口")
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<QuestionListVO>> listQuestionVOByPage(@RequestBody QuestionListRequest questionListRequest,
                                                                    HttpServletRequest request) {
@@ -211,6 +219,7 @@ public class QuestionController {
      * @param request
      * @return
      */
+    @ApiOperation("管理员分页获取题目列表接口")
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionListRequest questionListRequest,
@@ -231,6 +240,7 @@ public class QuestionController {
      * @param request
      * @return
      */
+    @ApiOperation("管理员编辑问题接口")
     @PostMapping("/edit")
     public BaseResponse<Boolean> editQuestion(@RequestBody QuestionEditRequest questionEditRequest, HttpServletRequest request) {
         if (questionEditRequest == null || questionEditRequest.getId() <= 0) {
@@ -257,7 +267,7 @@ public class QuestionController {
         boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
     }
-
+    @ApiOperation("用户获取题目列表接口")
     @GetMapping ("/list")
     public BaseResponse<Page<QuestionListVO>> getQuestionList(Long current, Long size) {
         Page<QuestionListVO> page = questionService.getQuestionList(current, size);
@@ -271,6 +281,7 @@ public class QuestionController {
      * @param request
      * @return 提交记录的 id
      */
+    @ApiOperation("用户提交代码接口")
     @PostMapping("/submit")
     public BaseResponse<Long> submitQuestion(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
                                                HttpServletRequest request) {
@@ -287,12 +298,13 @@ public class QuestionController {
     }
 
     /**
-     * 分页获取题目提交列表（除了管理员外，普通用户只能看到非答案、提交代码等公开信息）
+     *
      *
      * @param questionSubmitQueryRequest
      * @param request
      * @return
      */
+    @ApiOperation("分页获取题目提交列表（除了管理员外，普通用户只能看到非答案、提交代码等公开信息）")
     @PostMapping("/question_submit/list/page")
     public BaseResponse<Page<QuestionSubmitVO>> listQuestionSubmitByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
                                                                          HttpServletRequest request) {
@@ -310,6 +322,7 @@ public class QuestionController {
     /**
      * 获取判题结果
      */
+    @ApiOperation("根据提交 id 获取判题结果接口")
     @PostMapping("/result")
     public QuestionSubmit getSubmitResult(long id) {
         return questionSubmitService.getById(id);

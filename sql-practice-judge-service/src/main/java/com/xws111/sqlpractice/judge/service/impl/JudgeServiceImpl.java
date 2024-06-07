@@ -37,8 +37,6 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private QuestionFeignClient questionFeignClient;
 
-
-
     @Override
     public JudgeInfo judge(Long id) {
         JudgeInfo judgeInfo = new JudgeInfo();
@@ -58,6 +56,8 @@ public class JudgeServiceImpl implements JudgeService {
         String jsonResult = executeResult.getJsonResult();
         // 4. 判题
         String answer = questionFeignClient.getAnswerById(questionSubmit.getQuestionId());
+        jsonResult = jsonResult.replaceAll("=([^{},]+)", "=\"$1\"");
+        answer = answer.replaceAll("=([^{},]+)", "=\"$1\"");
         boolean result = compareJsonStrings(jsonResult, answer);
 
         judgeInfo.setTime(executeResult.getTime());
@@ -78,7 +78,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     private ExecuteResult postToRemoteApi(String sql) {
         // 设置请求 URL 和请求体
-        String url = "http://38.181.145.188:8080/execute";
+        String url = "http://47.116.186.3:8080/execute";
 //        String url = "http://192.168.17.128:8080/execute";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("inputSQL", sql);

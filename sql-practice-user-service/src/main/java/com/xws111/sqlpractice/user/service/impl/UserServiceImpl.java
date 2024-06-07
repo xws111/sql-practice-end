@@ -44,7 +44,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "xws111";
 
     @Override
-    public Long userRegister(String account, String password, String checkPassword) {
+    public LoginUserVO userRegister(String account, String password, String checkPassword, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
@@ -52,7 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (account.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
-        if (password.length() < 8 || checkPassword.length() < 8) {
+        if (password.length() < 6 || checkPassword.length() < 6) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
@@ -73,11 +73,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             User user = new User();
             user.setAccount(account);
             user.setPassword(encryptPassword);
+            user.setUsername(account);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
             }
-            return user.getId();
+            request.getSession().setAttribute(USER_LOGIN_STATE, user);
+            return this.getLoginUserVO(user);
         }
     }
 
@@ -90,7 +92,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (account.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
         }
-        if (password.length() < 8) {
+        if (password.length() < 6) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
         }
         // 2. 加密

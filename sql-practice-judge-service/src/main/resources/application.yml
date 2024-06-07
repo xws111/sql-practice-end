@@ -1,5 +1,4 @@
 spring:
-
   application:
     name: sql-practice-judge-service
   #session失效时间(分钟)
@@ -9,24 +8,29 @@ spring:
   #redis
   redis:
     port: 6379
-#    host: 172.31.24.211
-    host: 139.224.101.197
+    host: 47.116.196.137
     database: 0
+    password: sqlpractice
   jackson:
     date-format: yyyy-MM-dd
     timeZone: Asia/Shanghai
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: Dbase2122.
-    url: jdbc:mysql://139.224.101.197:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: xg
+    password: Dbase2122!
+    url: jdbc:mysql://rm-uf6jlnk6v4r5jemjsio.mysql.rds.aliyuncs.com:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+  cloud:
+    nacos:
+      discovery:
+        register-enabled: true
+        server-addr: 47.116.196.137:8848
 rocketmq:
-  name-server: 139.224.101.197:9876
+  name-server: 117.72.10.224:9876
   producer:
     group: consumer
     send-message-timeout: 3000
 server:
-  port: 8102
+  port: 9102
   servlet:
     context-path: /api/judge
     session:

@@ -25,13 +25,13 @@ public class LoginUserVO implements Serializable {
     /**
      * 用户头像
      */
-    private String avatar;
+    private String avatarUrl;
 
 
     /**
      * 用户角色：user/admin/ban
      */
-    private String role;
+    private Integer role;
 
     /**
      * 创建时间
