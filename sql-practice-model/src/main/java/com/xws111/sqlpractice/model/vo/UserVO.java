@@ -1,7 +1,5 @@
 package com.xws111.sqlpractice.model.vo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,7 +9,6 @@ import java.util.Date;
  * @Version 1.0
  * @Author xg
  */
-@Data
 public class UserVO implements Serializable {
     /**
      * id
