@@ -68,7 +68,7 @@ public class JudgeServiceImpl implements JudgeService {
             judgeInfo.setResult("完全正确, 恭喜你又进一步！");
         } else {
             log.info("答案错误！");
-            judgeInfo.setResult("错误！动动🧠！");
+            judgeInfo.setResult("错误！你再好好想想！");
         }
         // 5. 更新数据库结果
         log.info("已更新数据库中的提交记录。");

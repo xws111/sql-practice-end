@@ -50,7 +50,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         //更改状态为判题中
         mqProducer.send(id);
         log.info("提交题目：" + id + "提交数加 1 ");
-
         //更新提交数 + 1
         questionMapper.incrementSubmitCount(questionId);
         return id;
