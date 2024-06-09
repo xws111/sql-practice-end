@@ -46,6 +46,7 @@ public interface UserFeignClient {
      * @param request
      * @return
      */
+    @GetMapping("/get/current")
     default User getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
