@@ -24,6 +24,7 @@ spring:
       discovery:
         register-enabled: true
         server-addr: 47.116.196.137:8848
+        namespace: xws111
 rocketmq:
   name-server: 117.72.10.224:9876
   producer:

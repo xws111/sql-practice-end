@@ -13,6 +13,7 @@ spring:
     nacos:
       discovery:
         server-addr: 47.116.196.137:8848
+        namespace: xws111
     gateway:
       discovery:
         locator:
