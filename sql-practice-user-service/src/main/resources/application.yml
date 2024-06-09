@@ -24,7 +24,7 @@ spring:
       discovery:
         register-enabled: true
         server-addr: 47.116.196.137:8848
-        namespace: xws222
+        namespace: xws111
 server:
   port: 9101
   servlet:
