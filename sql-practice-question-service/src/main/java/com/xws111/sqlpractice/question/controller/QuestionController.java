@@ -25,9 +25,11 @@ import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.question.service.QuestionTagService;
 import com.xws111.sqlpractice.question.service.TagService;
 import com.xws111.sqlpractice.service.UserFeignClient;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +48,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/")
+@Api(tags = "题目接口")
 @Slf4j
 public class QuestionController {
 
@@ -74,7 +77,6 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("管理员新增问题接口")
-    @PostMapping("/add")
     public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
         if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -102,7 +104,6 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("管理员删除问题接口")
-    @PostMapping("/delete")
     public BaseResponse<Boolean> deleteQuestion(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -127,7 +128,6 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("管理员更新问题接口")
-    @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
         if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
@@ -153,7 +153,6 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("管理员获取指定 id 问题接口")
-    @GetMapping("/get/admin")
     public BaseResponse<Question> getQuestionById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -171,22 +170,21 @@ public class QuestionController {
     }
 
     /**
-     * 根据 id 获取（脱敏）
+     * 根据 id 获取
      *
      * @param id
      * @return
      */
-    @ApiOperation("用户获取指定 id 问题接口")
-    @GetMapping("/get")
-    public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
-        if (id <= 0) {
+    @ApiOperation("获取指定 id 问题接口")
+    @GetMapping("/{id}")
+    public BaseResponse<QuestionVO> getQuestionVOById(@PathVariable Long id, HttpServletRequest request) {
+        if (id==null||id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Question question = questionService.getById(id);
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-
         return ResultUtils.success(questionService.getQuestionVOById(id, request));
     }
 
@@ -198,7 +196,6 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("获取问题列表接口")
-    @PostMapping("/list/page/vo")
     public BaseResponse<Page<QuestionListVO>> listQuestionVOByPage(@RequestBody QuestionListRequest questionListRequest,
                                                                    HttpServletRequest request) {
         long current = questionListRequest.getCurrent();
@@ -213,23 +210,23 @@ public class QuestionController {
 
 
     /**
-     * 分页获取题目列表（仅管理员）
+     * 分页获取题目列表
      *
      * @param questionListRequest
-     * @param request
      * @return
      */
-    @ApiOperation("管理员分页获取题目列表接口")
+    @ApiOperation("分页获取题目列表接口")
     @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<Question>> listQuestionByPage(@RequestBody QuestionListRequest questionListRequest,
-                                                           HttpServletRequest request) {
+    public BaseResponse<Page<QuestionListVO>> listQuestionByPage(@RequestBody QuestionListRequest
+                                                                             questionListRequest) {
         long current = questionListRequest.getCurrent();
         long size = questionListRequest.getPageSize();
-        Page<Question> questionPage = questionService.page(new Page<>(current, size),
-                questionService.getQueryWrapper(questionListRequest));
-        return ResultUtils.success(questionPage);
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<QuestionListVO> page = questionService.getQuestionList(current, size);
+        return ResultUtils.success(page);
     }
+
 
     // endregion
 
@@ -241,8 +238,8 @@ public class QuestionController {
      * @return
      */
     @ApiOperation("管理员编辑问题接口")
-    @PostMapping("/edit")
-    public BaseResponse<Boolean> editQuestion(@RequestBody QuestionEditRequest questionEditRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> editQuestion(@RequestBody QuestionEditRequest questionEditRequest,
+                                              HttpServletRequest request) {
         if (questionEditRequest == null || questionEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -267,8 +264,8 @@ public class QuestionController {
         boolean result = questionService.updateById(question);
         return ResultUtils.success(result);
     }
+
     @ApiOperation("用户获取题目列表接口")
-    @GetMapping ("/list")
     public BaseResponse<Page<QuestionListVO>> getQuestionList(Long current, Long size) {
         Page<QuestionListVO> page = questionService.getQuestionList(current, size);
         return ResultUtils.success(page);
@@ -282,9 +279,8 @@ public class QuestionController {
      * @return 提交记录的 id
      */
     @ApiOperation("用户提交代码接口")
-    @PostMapping("/submit")
     public BaseResponse<Long> submitQuestion(@RequestBody QuestionSubmitAddRequest questionSubmitAddRequest,
-                                               HttpServletRequest request) {
+                                             HttpServletRequest request) {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -298,14 +294,11 @@ public class QuestionController {
     }
 
     /**
-     *
-     *
      * @param questionSubmitQueryRequest
      * @param request
      * @return
      */
     @ApiOperation("分页获取题目提交列表（除了管理员外，普通用户只能看到非答案、提交代码等公开信息）")
-    @PostMapping("/question_submit/list/page")
     public BaseResponse<Page<QuestionSubmitVO>> listQuestionSubmitByPage(@RequestBody QuestionSubmitQueryRequest questionSubmitQueryRequest,
                                                                          HttpServletRequest request) {
         long current = questionSubmitQueryRequest.getCurrent();
@@ -323,10 +316,8 @@ public class QuestionController {
      * 获取判题结果
      */
     @ApiOperation("根据提交 id 获取判题结果接口")
-    @PostMapping("/result")
     public QuestionSubmit getSubmitResult(long id) {
         return questionSubmitService.getById(id);
     }
-
 
 }
