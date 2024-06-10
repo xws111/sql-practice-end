@@ -38,7 +38,7 @@ public class AdminUserController {
     }  
   
     @PostMapping("/search")
-    @ApiOperation(value = "searchUser",notes = "管理员模糊查询用户信息")
+    @ApiOperation(value = "searchUser",notes = "管理员根据id查询用户")
     public BaseResponse searchUser(@RequestBody UserSearchRequest searchRequest) {
         return adminUserService.searchUser(searchRequest);  
     }  
