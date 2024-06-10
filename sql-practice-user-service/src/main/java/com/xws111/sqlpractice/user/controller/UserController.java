@@ -35,7 +35,7 @@ public class UserController {
      * @param userRegisterRequest 请求体
      * @return 登录用户 VO
      */
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     @ApiOperation(value = "用户注册接口", notes = "用户注册接口")
     public BaseResponse<LoginUserVO> userRegister(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request) {
         if (userRegisterRequest == null) {
@@ -59,7 +59,7 @@ public class UserController {
      * @return 用户信息 VO
      */
     @ApiOperation(value = "用户登录接口", notes = "用户登录接口")
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -82,7 +82,7 @@ public class UserController {
      * @return 返回成功与否
      */
     @ApiOperation(value = "用户登出接口", notes = "用户登出接口")
-    @PostMapping("/user/logout")
+    @PostMapping("/logout")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -98,7 +98,7 @@ public class UserController {
      * @return 用户信息 VO
      */
     @ApiOperation(value = "获取当前登录用户信息接口", notes = "获取当前登录用户信息接口")
-    @GetMapping("/use/current")
+    @GetMapping("/current")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
@@ -112,7 +112,7 @@ public class UserController {
      * @return 成功与否
      */
     @ApiOperation(value = "用户更新用户信息接口", notes = "用户更新用户信息接口")
-    @PostMapping("/user/update")
+    @PostMapping("/update")
     public BaseResponse<Boolean> updateByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
