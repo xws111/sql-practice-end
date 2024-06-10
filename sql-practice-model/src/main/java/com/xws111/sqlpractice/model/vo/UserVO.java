@@ -1,5 +1,9 @@
 package com.xws111.sqlpractice.model.vo;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,6 +13,9 @@ import java.util.Date;
  * @Version 1.0
  * @Author xg
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserVO implements Serializable {
     /**
      * id
