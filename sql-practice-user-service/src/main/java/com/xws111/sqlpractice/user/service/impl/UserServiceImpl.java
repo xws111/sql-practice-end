@@ -41,8 +41,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "xws111";
 
     private static final String USER_LOGIN_STATE = "USER_LOGIN_STATE";
-//    private static final int COOKIE_EXPIRATION = 7 * 24 * 60 * 60; // 7 天
-
     @Override
     public LoginUserVO userRegister(String account, String password, String checkPassword, HttpServletRequest request) {
         // 1. 校验
@@ -88,13 +86,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public LoginUserVO userLogin(String account, String password, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
         }
         if (account.length() < 6) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
         if (password.length() < 6) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
@@ -130,12 +128,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-//        long userId = currentUser.getId();
-//        currentUser = this.getById(userId);
-//        if (currentUser == null) {
-//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-//        }
         return currentUser;
     }
 
