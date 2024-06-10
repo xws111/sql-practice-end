@@ -7,19 +7,21 @@ import com.xws111.sqlpractice.model.dto.user.UserQueryRequest;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.model.vo.UserVO;
+
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
 
 /**
-* @author xg
-* @description 针对表【user(用户表)】的数据库操作Service
-* @createDate 2024-05-03 22:04:52
-*/
+ * @author xg
+ * @description 针对表【user(用户表)】的数据库操作Service
+ * @createDate 2024-05-03 22:04:52
+ */
 public interface UserService extends IService<User> {
 
     String USER_LOGIN_STATE = "loginState";
+
     /**
      * 用户注册
      *
@@ -56,21 +58,21 @@ public interface UserService extends IService<User> {
      */
     User getLoginUserPermitNull(HttpServletRequest request);
 
-    /**
-     * 是否为管理员
-     *
-     * @param request
-     * @return
-     */
-    boolean isAdmin(HttpServletRequest request);
-
-    /**
-     * 是否为管理员
-     *
-     * @param user
-     * @return
-     */
-    boolean isAdmin(User user);
+//    /**
+//     * 是否为管理员
+//     *
+//     * @param request
+//     * @return
+//     */
+//    boolean isAdmin(HttpServletRequest request);
+//
+//    /**
+//     * 是否为管理员
+//     *
+//     * @param user
+//     * @return
+//     */
+//    boolean isAdmin(User user);
 
     /**
      * 用户注销
@@ -79,6 +81,14 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean userLogout(HttpServletRequest request);
+
+    /**
+     * 用户脱敏
+     *
+     * @param user
+     * @return
+     */
+    User getSafetyUser(User user);
 
     /**
      * 获取脱敏的已登录用户信息
@@ -103,5 +113,11 @@ public interface UserService extends IService<User> {
      */
     List<UserVO> getUserVO(List<User> userList);
 
+    /**
+     * 获取查询条件
+     *
+     * @param userQueryRequest
+     * @return
+     */
     Wrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 }
