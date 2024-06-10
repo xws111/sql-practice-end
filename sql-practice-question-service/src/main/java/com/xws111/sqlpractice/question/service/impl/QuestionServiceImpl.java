@@ -98,7 +98,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         // 拼接查询条件
         queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
         queryWrapper.eq("deleted", false);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
     }
@@ -109,6 +110,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
+
         QuestionVO questionVO = questionMapper.getQuestionContent(id);
         List<String> tags = tagMapper.getTagNamesByQuestionId(id);
         questionVO.setTags(tags);
@@ -118,7 +120,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public Page<QuestionListVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request) {
         List<Question> questionList = questionPage.getRecords();
-        Page<QuestionListVO> questionVOPage = new Page<>(questionPage.getCurrent(), questionPage.getSize(), questionPage.getTotal());
+        Page<QuestionListVO> questionVOPage = new Page<>(questionPage.getCurrent(),
+                questionPage.getSize(), questionPage.getTotal());
         if (CollectionUtils.isEmpty(questionList)) {
             return questionVOPage;
         }
