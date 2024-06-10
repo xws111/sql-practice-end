@@ -20,9 +20,9 @@ public class QuestionAddRequest implements Serializable {
     private String title;
 
     /**
-     * 内容
+     * 题目描述
      */
-    private String description;
+    private String content;
 
     /**
      * 标签列表
