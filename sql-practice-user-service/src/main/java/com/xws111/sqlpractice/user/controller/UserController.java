@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
-@RequestMapping("/")
+@RequestMapping("/api")
 public class UserController {
     @Resource
     private UserService userService;
@@ -35,8 +35,8 @@ public class UserController {
      * @param userRegisterRequest 请求体
      * @return 登录用户 VO
      */
-    @PostMapping("/register")
-    @ApiOperation("用户注册接口")
+    @PostMapping("/user/register")
+    @ApiOperation(value = "用户注册接口", notes = "用户注册接口")
     public BaseResponse<LoginUserVO> userRegister(@RequestBody UserRegisterRequest userRegisterRequest, HttpServletRequest request) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -58,8 +58,8 @@ public class UserController {
      * @param request          request
      * @return 用户信息 VO
      */
-    @ApiOperation("用户登录接口")
-    @PostMapping("/login")
+    @ApiOperation(value = "用户登录接口", notes = "用户登录接口")
+    @PostMapping("/user/login")
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -81,8 +81,8 @@ public class UserController {
      * @param request request
      * @return 返回成功与否
      */
-    @ApiOperation("用户登出接口")
-    @PostMapping("/logout")
+    @ApiOperation(value = "用户登出接口", notes = "用户登出接口")
+    @PostMapping("/user/logout")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -97,8 +97,8 @@ public class UserController {
      * @param request request
      * @return 用户信息 VO
      */
-    @ApiOperation("获取当前登录用户信息接口")
-    @GetMapping("/current")
+    @ApiOperation(value = "获取当前登录用户信息接口", notes = "获取当前登录用户信息接口")
+    @GetMapping("/use/current")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
@@ -111,8 +111,8 @@ public class UserController {
      * @param request             request
      * @return 成功与否
      */
-    @ApiOperation("用户更新用户信息接口")
-    @PostMapping("/update")
+    @ApiOperation(value = "用户更新用户信息接口", notes = "用户更新用户信息接口")
+    @PostMapping("/user/update")
     public BaseResponse<Boolean> updateByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
