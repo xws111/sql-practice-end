@@ -1,7 +1,7 @@
 package com.xws111.sqlpractice.question.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.DeleteRequest;
@@ -13,8 +13,6 @@ import com.xws111.sqlpractice.model.dto.question.QuestionAddRequest;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.dto.question.QuestionUpdateRequest;
 import com.xws111.sqlpractice.model.entity.Question;
-import com.xws111.sqlpractice.model.entity.QuestionTag;
-import com.xws111.sqlpractice.model.entity.Tag;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionAllVO;
 import com.xws111.sqlpractice.model.vo.QuestionListAllVO;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -60,20 +57,22 @@ public class AdminQuestionController {
         if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // 需要管理员权限
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (loginUser.getRole() == 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
+        }
         Question question = new Question();
         BeanUtils.copyProperties(questionAddRequest, question);
         List<String> tags = questionAddRequest.getTags();
-        User loginUser = userFeignClient.getLoginUser(request);
         boolean resultInsertQuestion = adminQuestionService.save(question);
         Long afterInsertQuestionId = question.getId();
         ThrowUtils.throwIf(!resultInsertQuestion, ErrorCode.OPERATION_ERROR);
         long newQuestionId = question.getId();
-
-        // 添加标签
+        // 添加标签与问题的对应关系
         if (tags != null) {
-//            添加进关系表
+           // 添加进关系表
            adminQuestionService.addQuestionTag(tags, afterInsertQuestionId);
-            
         }
         
         return ResultUtils.success(newQuestionId);
@@ -94,20 +93,19 @@ public class AdminQuestionController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userFeignClient.getLoginUser(request);
+        // 需要管理员权限
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (loginUser.getRole() == 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
+        }
         long id = deleteRequest.getId();
         // 判断是否存在
         Question oldQuestion = adminQuestionService.getById(id);
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
-        // 仅本人或管理员可删除
-//        if (!userFeignClient.isAdmin(user)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
-        
-        boolean b = adminQuestionService.removeById(id);
+        boolean result = adminQuestionService.removeById(id);
         //删除关联表数据
         adminQuestionService.removeQuestionTag(id);
-        return ResultUtils.success(b);
+        return ResultUtils.success(result);
     }
 
     /**
@@ -120,15 +118,19 @@ public class AdminQuestionController {
     @PostMapping("/update")
 //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     @Transactional
-    public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest) {
+    public BaseResponse<Boolean> updateQuestion(@RequestBody QuestionUpdateRequest questionUpdateRequest, HttpServletRequest request) {
         if (questionUpdateRequest == null || questionUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 需要管理员权限
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (loginUser.getRole() == 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
         }
         Question question = new Question();
         BeanUtils.copyProperties(questionUpdateRequest, question);
         List<String> tags = questionUpdateRequest.getTags();
 
-//        List<JudgeCase> judgeCase = questionUpdateRequest.getJudgeCase();
         long id = questionUpdateRequest.getId();
         // 判断是否存在
         Question oldQuestion = adminQuestionService.getById(id);
@@ -150,7 +152,7 @@ public class AdminQuestionController {
     @ApiOperation("管理员获取指定 id 问题接口")
     @GetMapping("/search")
     //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<QuestionAllVO> getQuestionById(@RequestBody long id, HttpServletRequest request) {
+    public BaseResponse<QuestionAllVO> getQuestionById(@RequestParam long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -158,11 +160,11 @@ public class AdminQuestionController {
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
+        // 需要管理员权限
         User loginUser = userFeignClient.getLoginUser(request);
-        // 不是本人或管理员，不能直接获取所有信息
-//        if (!userFeignClient.isAdmin(loginUser)) {
-//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-//        }
+        if (loginUser.getRole() == 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
+        }
         QuestionAllVO questionAllVO = adminQuestionService.selectQuestionTag(question);
 
         return ResultUtils.success(questionAllVO);
@@ -177,17 +179,15 @@ public class AdminQuestionController {
      * @return
      */
     @ApiOperation("获取问题列表接口")
-    @PostMapping("/list/page")
+    @GetMapping("/list/page")
     //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Page<QuestionListAllVO>> listQuestionVOByPage(@RequestBody QuestionListRequest questionListRequest,
-                                                                      HttpServletRequest request) {
-        long current = questionListRequest.getCurrent();
-        long size = questionListRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<Question> questionPage = adminQuestionService.page(new Page<>(current, size),
-                adminQuestionService.getQueryWrapper(questionListRequest));
-        return ResultUtils.success(adminQuestionService.getQuestionVOPage(questionPage, request));
+    public BaseResponse<PageInfo<QuestionAllVO>> listQuestionVOByPage(@ModelAttribute QuestionListRequest questionListRequest, HttpServletRequest request) {
+        // 需要管理员权限
+        User loginUser = userFeignClient.getLoginUser(request);
+        if (loginUser.getRole() == 0) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
+        }
+        return ResultUtils.success(adminQuestionService.getQuestionVOPage(questionListRequest, request));
 
     }
 }

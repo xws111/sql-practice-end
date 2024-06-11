@@ -3,10 +3,10 @@ package com.xws111.sqlpractice.question.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.vo.QuestionAllVO;
-import com.xws111.sqlpractice.model.vo.QuestionListAllVO;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 
@@ -48,11 +48,11 @@ public interface AdminQuestionService extends IService<Question> {
     /**
      * 分页获取题目封装
      *
-     * @param questionPage
+     * @param questionListRequest
      * @param request
      * @return
      */
-    Page<QuestionListAllVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
+    PageInfo<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request);
 
     Page<QuestionListVO> getQuestionList(long current, long size);
     //给问题添加标签

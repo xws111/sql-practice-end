@@ -57,6 +57,10 @@ public class QuestionAllVO implements Serializable {
      */
     private List<String> tags;
 
+    /**
+     * 标签列表字符串
+     */
+    private String tagList;
 
     private static final long serialVersionUID = 1L;
 }

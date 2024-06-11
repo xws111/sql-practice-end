@@ -1,14 +1,16 @@
 package com.xws111.sqlpractice.question.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
+import com.xws111.sqlpractice.mapper.QuestionTagMapper;
 import com.xws111.sqlpractice.mapper.TagMapper;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
@@ -51,7 +53,10 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     private TagService tagService;
     @Resource
     private QuestionTagService questionTagService;
-    
+
+    @Resource
+    private QuestionTagMapper questionTagMapper;
+
     /**
      * 校验题目是否合法
      *
@@ -97,11 +102,15 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
         }
         Long id = questionListRequest.getId();
         String title = questionListRequest.getTitle();
+        String content = questionListRequest.getContent();
+        List<String> tags = questionListRequest.getTags();
         String sortField = questionListRequest.getSortField();
         String sortOrder = questionListRequest.getSortOrder();
-
         // 拼接查询条件
+        queryWrapper.eq(id > 0, "id", id);
         queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
+        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
+        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
         queryWrapper.eq("is_deleted", false);
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
@@ -121,55 +130,19 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     }
 
     @Override
-    public Page<QuestionListAllVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request) {
-//        List<Question> questionList = questionPage.getRecords();
-//        Page<QuestionListVO> questionVOPage = new Page<>(questionPage.getCurrent(), questionPage.getSize(), questionPage.getTotal());
-//        if (CollectionUtils.isEmpty(questionList)) {
-//            return questionVOPage;
-//        }
-
-//        // 1. 关联查询用户信息
-//        Set<Long> userIdSet = questionList.stream().map(Question::getUserId).collect(Collectors.toSet());
-//        Map<Long, List<User>> userIdUserListMap = userFeignClient.listByIds(userIdSet).stream()
-//                .collect(Collectors.groupingBy(User::getId));
-//        // 填充信息
-//        List<QuestionVO> questionVOList = questionList.stream().map(question -> {
-//            QuestionVO questionVO = QuestionVO.objToVo(question);
-//            Long userId = question.getUserId();
-//            User user = null;
-//            if (userIdUserListMap.containsKey(userId)) {
-//                user = userIdUserListMap.get(userId).get(0);
-//            }
-//            questionVO.setUserVO(userFeignClient.getUserVO(user));
-//            return questionVO;
-//        }).collect(Collectors.toList());
-//        questionVOPage.setRecords(questionVOList);
-//        return questionVOPage;
-
-//        Page<QuestionListVO> page = new Page<>(current, size);
-        List<Question> questionList = questionPage.getRecords();
-        List<QuestionListAllVO> questionListALLVOList =new ArrayList<>();
-        for (Question question : questionList) {
-            QuestionListAllVO questionListALLVO=new QuestionListAllVO();
-            BeanUtil.copyProperties(question,questionListALLVO);
-            questionListALLVOList.add(questionListALLVO);
+    public PageInfo<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request) {
+        String title = questionListRequest.getTitle();
+        String content = questionListRequest.getContent();
+        if (StringUtils.isNotBlank(title)) {
+            questionListRequest.setTitle("%" + title + "%");
         }
+        if (StringUtils.isNotBlank(content)) {
+            questionListRequest.setTitle("%" + content + "%");
+        }
+        PageHelper.startPage(questionListRequest.getCurrent(), questionListRequest.getPageSize());
+        List<QuestionAllVO> questionAllVOByRequest = questionMapper.getQuestionAllVOByRequest(questionListRequest);
+        return new PageInfo<>(questionAllVOByRequest);
 
-        List<QuestionTagVO> questionTagVOList = questionMapper.getAllQuestionTags();
-        // 建立问题 ID 到标签列表的映射
-        Map<Long, List<String>> questionToTags = new HashMap<>();
-        for (QuestionTagVO questionTag : questionTagVOList) {
-            questionToTags
-                    .computeIfAbsent(questionTag.getQuestionId(), k -> new ArrayList<>())
-                    .add(questionTag.getTagName());
-        }
-        // 将标签列表合并到问题对象中
-        for (QuestionListAllVO questionListALLVO : questionListALLVOList) {
-            questionListALLVO.setTags(questionToTags.getOrDefault(questionListALLVO.getId(), Collections.emptyList()));
-        }
-        Page<QuestionListAllVO> questionListALLVOPage = new Page<>(questionPage.getCurrent(), questionPage.getSize(), questionPage.getTotal());
-        questionListALLVOPage.setRecords(questionListALLVOList);
-        return  questionListALLVOPage;
     }
 
     @Override
@@ -194,14 +167,17 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     }
 
     @Override
-    public void addQuestionTag(List<String> tags,Long afterInsertQuestionId) {
+    // todo 有待优化：批量保存、动态 sql
+    // 可以实现：SELECT id FROM tags WHERE name IN ('tag1', 'tag2', 'tag3');
+    // 使数据库只有一次查询
+    public void addQuestionTag(List<String> tags, Long afterInsertQuestionId) {
         QuestionTag questionTag = new QuestionTag();
         questionTag.setQuestionId(afterInsertQuestionId);
         // todo 添加进关系表
         for (String tagName : tags) {
             //根据标签名查出tag表对应标签的id
-            QueryWrapper<Tag> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("name",tagName);
+            QueryWrapper<Tag> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name", tagName);
             Tag tag = tagService.getOne(queryWrapper);
             Integer tagId = tag.getId();
             //插入关联表
@@ -213,31 +189,31 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
 
     @Override
     public void removeQuestionTag(Long id) {
-        QueryWrapper<QuestionTag> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("question_id",id);
+        QueryWrapper<QuestionTag> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("question_id", id);
         List<QuestionTag> questionTagList = questionTagService.list(queryWrapper);
-        
+
         Long questionTagId = questionTagList.get(0).getQuestionId();
         //删除关联表的数据
-            boolean result = questionTagService.removeById(questionTagId);
-            ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-//        }
+        boolean result = questionTagService.removeById(questionTagId);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+
     }
 
     @Override
     public QuestionAllVO selectQuestionTag(Question question) {
         Long id = question.getId();
-        QueryWrapper<QuestionTag> queryWrapper=new QueryWrapper<>();
-        queryWrapper.eq("question_id",id);
+        QueryWrapper<QuestionTag> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("question_id", id);
         List<QuestionTag> questionTagList = questionTagService.list(queryWrapper);
-        QuestionAllVO questionAllVO=new QuestionAllVO();
-        List<String> tagList =new ArrayList<>();
-        for (QuestionTag questionTag:questionTagList){
+        QuestionAllVO questionAllVO = new QuestionAllVO();
+        List<String> tagList = new ArrayList<>();
+        for (QuestionTag questionTag : questionTagList) {
             Tag tag = tagService.getById(questionTag.getTagId());
             tagList.add(tag.getName());
         }
         questionAllVO.setTags(tagList);
-        BeanUtils.copyProperties(question,questionAllVO);
+        BeanUtils.copyProperties(question, questionAllVO);
         return questionAllVO;
     }
 
