@@ -3,12 +3,14 @@ package com.xws111.sqlpractice.question.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author xg
@@ -51,5 +53,5 @@ public interface QuestionService extends IService<Question> {
      */
     Page<QuestionListVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
 
-    Page<QuestionListVO> getQuestionList(long current, long size);
+    List<QuestionListVO> getQuestionList(int current, int size);
 }

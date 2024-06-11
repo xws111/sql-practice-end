@@ -1,6 +1,7 @@
 package com.xws111.sqlpractice.question.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.DeleteRequest;
@@ -48,7 +49,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/")
-@Api(tags = "题目接口")
+@Api(tags = "用户获取题目信息接口")
 @Slf4j
 public class QuestionController {
 
@@ -74,7 +75,7 @@ public class QuestionController {
      * @param id 题目id
      * @return 题目包装类
      */
-    @ApiOperation(value = "getQuestionVOById", notes = "获取指定题目信息接口")
+    @ApiOperation(value = "获取指定题目信息接口", notes = "获取指定题目信息接口")
     @GetMapping("/{id}")
     public BaseResponse<QuestionVO> getQuestionVOById(@PathVariable Long id, HttpServletRequest request) {
         if (id == null || id <= 0) {
@@ -94,15 +95,15 @@ public class QuestionController {
      * @param questionListRequest 题目列表查询包装类
      * @return 分页题目列表包装类
      */
-    @ApiOperation(value = "listQuestionByPage", notes = "分页获取题目列表接口")
-    @PostMapping("/list/page")
-    public BaseResponse<Page<QuestionListVO>> listQuestionByPage(@RequestBody QuestionListRequest questionListRequest) {
+    @ApiOperation(value = "分页获取所有题目列表接口", notes = "分页获取所有题目列表接口")
+    @GetMapping("/list/page")
+    public BaseResponse<List<QuestionListVO>> listQuestionByPage(@ModelAttribute QuestionListRequest questionListRequest) {
 
-        long current = questionListRequest.getCurrent();
-        long size = questionListRequest.getPageSize();
+        int current = questionListRequest.getCurrent();
+        int size = questionListRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<QuestionListVO> page = questionService.getQuestionList(current, size);
+        List<QuestionListVO> page = questionService.getQuestionList(current, size);
         return ResultUtils.success(page);
     }
 

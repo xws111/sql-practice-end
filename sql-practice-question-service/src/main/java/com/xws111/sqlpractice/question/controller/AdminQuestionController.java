@@ -38,16 +38,6 @@ public class AdminQuestionController {
 
     @Resource
     private UserFeignClient userFeignClient;
-    @Resource
-    private TagService tagService;
-    @Resource
-    private QuestionTagService questionTagService;
-
-    @Resource
-    private QuestionSubmitService questionSubmitService;
-
-    private final static Gson GSON = new Gson();
-
 
     @ApiOperation("管理员新增问题接口")
     @PostMapping("/add")

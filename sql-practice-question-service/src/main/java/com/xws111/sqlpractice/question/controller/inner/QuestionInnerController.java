@@ -24,14 +24,14 @@ public class QuestionInnerController implements QuestionFeignClient {
      * @param id
      * @return
      */
-    @PostMapping("/get")
+    @GetMapping("/get")
     public QuestionSubmit getQuestionSubmitById(@RequestParam("id") long id) {
         if (id < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         return questionSubmitService.getById(id);
     }
-    @PostMapping("/answer")
+    @GetMapping("/answer")
     public String getAnswerById(@RequestParam("id") Long id) {
         if (id < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

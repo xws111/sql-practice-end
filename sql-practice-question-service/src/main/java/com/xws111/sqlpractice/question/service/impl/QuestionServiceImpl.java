@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.github.pagehelper.PageHelper;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
@@ -125,29 +126,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if (CollectionUtils.isEmpty(questionList)) {
             return questionVOPage;
         }
-//        // 1. 关联查询用户信息
-//        Set<Long> userIdSet = questionList.stream().map(Question::getUserId).collect(Collectors.toSet());
-//        Map<Long, List<User>> userIdUserListMap = userFeignClient.listByIds(userIdSet).stream()
-//                .collect(Collectors.groupingBy(User::getId));
-//        // 填充信息
-//        List<QuestionVO> questionVOList = questionList.stream().map(question -> {
-//            QuestionVO questionVO = QuestionVO.objToVo(question);
-//            Long userId = question.getUserId();
-//            User user = null;
-//            if (userIdUserListMap.containsKey(userId)) {
-//                user = userIdUserListMap.get(userId).get(0);
-//            }
-//            questionVO.setUserVO(userFeignClient.getUserVO(user));
-//            return questionVO;
-//        }).collect(Collectors.toList());
-//        questionVOPage.setRecords(questionVOList);
         return questionVOPage;
     }
 
     @Override
-    public Page<QuestionListVO> getQuestionList(long current, long size) {
-        Page<QuestionListVO> page = new Page<>(current, size);
-
+    public List<QuestionListVO> getQuestionList(int current, int size) {
+        PageHelper.startPage(current, size);
         List<QuestionListVO> questionListVO = questionMapper.getAllQuestions();
         List<QuestionTagVO> tags = questionMapper.getAllQuestionTags();
         // 建立问题 ID 到标签列表的映射
@@ -161,8 +145,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         for (QuestionListVO question : questionListVO) {
             question.setTags(questionToTags.getOrDefault(question.getId(), Collections.emptyList()));
         }
-        page.setRecords(questionListVO);
-        return page;
+
+        return questionListVO;
     }
 
 }
