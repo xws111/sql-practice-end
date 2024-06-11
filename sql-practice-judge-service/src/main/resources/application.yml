@@ -25,7 +25,7 @@ spring:
         register-enabled: true
         server-addr: 47.116.196.137:8848
         # 改为自己的 nacos 命名空间
-        namespace: bucunzai
+        namespace: xws111
 rocketmq:
   name-server: 117.72.10.224:9876
   producer:
