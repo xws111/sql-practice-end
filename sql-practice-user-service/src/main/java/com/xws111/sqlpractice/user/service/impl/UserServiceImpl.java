@@ -12,19 +12,16 @@ import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.UserMapper;
 import com.xws111.sqlpractice.model.dto.user.UserQueryRequest;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpractice.user.service.UserService;
 import com.xws111.sqlpractice.utils.SqlUtils;
-
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,13 +40,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static final String SALT = "xws111";
 
+    private static final String USER_LOGIN_STATE = "USER_LOGIN_STATE";
     @Override
     public LoginUserVO userRegister(String account, String password, String checkPassword, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
-        if (account.length() < 4) {
+        if (account.length() < 6) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
         if (password.length() < 6 || checkPassword.length() < 6) {
@@ -73,6 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             User user = new User();
             user.setAccount(account);
             user.setPassword(encryptPassword);
+            //用户名设置为用户的账户
             user.setUsername(account);
             boolean saveResult = this.save(user);
             if (!saveResult) {
@@ -87,13 +86,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public LoginUserVO userLogin(String account, String password, HttpServletRequest request) {
         // 1. 校验
         if (StringUtils.isAnyBlank(account, password)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码不能为空");
         }
-        if (account.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
+        if (account.length() < 6) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
         if (password.length() < 6) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号或密码错误");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + password).getBytes());
@@ -107,11 +106,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             log.info("user login failed, account cannot match password");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
-        // 3. 记录用户的登录态
+        // 3. 记录用户的登录态  使用Spring Session 框架会拦截这个调用，并将 USER_LOGIN_STATE 和对应的 user 对象序列化后存储到配置的 Redis 中
+        //脱敏 不展示密码
+        User safetyUser = getSafetyUser(user);
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return this.getLoginUserVO(user);
-
+        return this.getLoginUserVO(safetyUser);
     }
+
 
     /**
      * 获取当前登录用户
@@ -127,12 +128,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-//        long userId = currentUser.getId();
-//        currentUser = this.getById(userId);
-//        if (currentUser == null) {
-//            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-//        }
         return currentUser;
     }
 
@@ -150,29 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (currentUser == null || currentUser.getId() == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-//        long userId = currentUser.getId();
-//        return this.getById(userId);
         return currentUser;
-    }
-
-    /**
-     * 是否为管理员
-     *
-     * @param request
-     * @return
-     */
-    @Override
-    public boolean isAdmin(HttpServletRequest request) {
-        // 仅管理员可查询
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User user = (User) userObj;
-        return isAdmin(user);
-    }
-
-    @Override
-    public boolean isAdmin(User user) {
-        return user != null && user.getRole() == UserRoleEnum.ADMIN.getRole();
     }
 
     /**
@@ -190,7 +163,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return true;
     }
 
+    /**
+     * 用户脱敏
+     *
+     * @param user
+     * @return
+     */
     @Override
+    public User getSafetyUser(User user) {
+        if (user == null) {
+            return null;
+        }
+        User safetyUser = new User();
+        safetyUser.setUsername(user.getUsername());
+        safetyUser.setAccount(user.getAccount());
+//        safetyUser.setPassword(user.getPassword());
+        return safetyUser;
+    }
+
+
+    @Override
+    //返回脱敏后的信息
     public LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
             return null;
