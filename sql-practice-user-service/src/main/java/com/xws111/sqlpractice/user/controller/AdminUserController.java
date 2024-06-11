@@ -1,9 +1,10 @@
 package com.xws111.sqlpractice.user.controller;  
   
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xws111.sqlpractice.common.BaseResponse;
-import com.xws111.sqlpractice.common.PageResponse;  
-import com.xws111.sqlpractice.model.dto.user.*;  
+import com.xws111.sqlpractice.model.dto.user.*;
+import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpractice.user.service.AdminUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0  
  * @description: 后台管理员用户 控制层  
  * @date 2024/6/9 15:25  
- */@RestController  
+ */
+@RestController
 @RequestMapping("/admin")  
 @RequiredArgsConstructor
-@Api("管理端用户控制层")
+@Api(tags = "管理端用户控制层")
+@SuppressWarnings({"all"})
 public class AdminUserController {  
     private final AdminUserService adminUserService;  
   
@@ -33,7 +36,7 @@ public class AdminUserController {
   
     @PostMapping("/list/page")
     @ApiOperation(value = "fuzzyPageQuery",notes = "管理员分页获取用户信息")
-    public PageResponse fuzzyPageQuery(@RequestBody UserQueryRequest userQueryRequest) {
+    public BaseResponse<Page<UserVO>> fuzzyPageQuery(@RequestBody UserQueryRequest userQueryRequest) {
         return adminUserService.fuzzyPageQuery(userQueryRequest);  
     }  
   
