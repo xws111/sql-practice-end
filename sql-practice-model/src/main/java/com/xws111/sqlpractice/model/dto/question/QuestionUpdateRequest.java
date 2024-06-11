@@ -39,16 +39,19 @@ public class QuestionUpdateRequest implements Serializable {
      * 题目答案
      */
     private String answer;
-
+    /**
+     * 时间限制 ms
+     */
+    private Integer timeLimit;
     /**
      * 判题用例
      */
-    private List<JudgeCase> judgeCase;
+//    private List<JudgeCase> judgeCase;
 
     /**
      * 判题配置
      */
-    private JudgeConfig judgeConfig;
+//    private JudgeConfig judgeConfig;
 
     private static final long serialVersionUID = 1L;
 }

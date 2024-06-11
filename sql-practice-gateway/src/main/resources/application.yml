@@ -13,7 +13,8 @@ spring:
     nacos:
       discovery:
         server-addr: 47.116.196.137:8848
-        namespace: 92d0b289-da85-4131-92c1-5ae4d8c57558
+        # 改为自己的 nacos 命名空间
+        namespace: bucunzai
     gateway:
       discovery:
         locator:

@@ -1,12 +1,16 @@
 package com.xws111.sqlpractice.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
+import com.xws111.sqlpractice.model.vo.QuestionAllVO;
 import com.xws111.sqlpractice.model.vo.QuestionTagVO;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
+import com.xws111.sqlpractice.provider.QuestionSqlProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +50,9 @@ public interface QuestionMapper extends BaseMapper<Question> {
 
     @Update("UPDATE question SET accepted = question.accepted + 1 WHERE id = #{questionId}")
     void incrementAcceptedCount(@Param("questionId") Long questionId);
+
+    @SelectProvider(type = QuestionSqlProvider.class, method = "getQuestionAllVOByRequest")
+    List<QuestionAllVO> getQuestionAllVOByRequest(QuestionListRequest request);
 
 }
 

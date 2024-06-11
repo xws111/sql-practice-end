@@ -27,6 +27,11 @@ public class QuestionListRequest extends PageRequest implements Serializable {
      */
     private String title;
 
+    /**
+     * 内容
+     */
+    private String content;
+
     List<String> tags;
 
     private static final long serialVersionUID = 1L;
