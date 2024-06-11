@@ -2,13 +2,16 @@ package com.xws111.sqlpractice.question.service;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.vo.QuestionSubmitResultVO;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author xg
@@ -25,6 +28,15 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      */
     long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser);
 
+
+    /**
+     * 当前用户提交结果
+     * @param request
+     * @param id
+     * @return
+     */
+    QuestionSubmitResultVO getSubmitQuestion(HttpServletRequest request, Integer id);
+
     /**
      * 获取查询条件
      *
@@ -33,22 +45,23 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
      */
     QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
 
+
+    QueryWrapper<QuestionSubmit> getUserQueryWrapper(HttpServletRequest request);
+
     /**
      * 获取题目封装
      *
      * @param questionSubmit
-     * @param loginUser
      * @return
      */
-    QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit, User loginUser);
+    QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit);
 
     /**
      * 分页获取题目封装
      *
      * @param questionSubmitPage
-     * @param loginUser
      * @return
      */
-    Page<QuestionSubmitVO> getQuestionSubmitVOPage(Page<QuestionSubmit> questionSubmitPage, User loginUser);
+    List<QuestionSubmitVO> getQuestionSubmitVOPage(List<QuestionSubmit> questionSubmitPage);
 
 }

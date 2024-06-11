@@ -16,3 +16,8 @@ spring:
   jackson:
     date-format: yyyy-MM-dd
     timeZone: Asia/Shanghai
+server:
+  servlet:
+    session:
+      cookie:
+        path: /api

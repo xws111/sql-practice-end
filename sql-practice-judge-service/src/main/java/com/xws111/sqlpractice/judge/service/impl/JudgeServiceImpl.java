@@ -79,7 +79,6 @@ public class JudgeServiceImpl implements JudgeService {
     private ExecuteResult postToRemoteApi(String sql) {
         // 设置请求 URL 和请求体
         String url = "http://118.89.133.136:8080/execute";
-//        String url = "http://192.168.17.128:8080/execute";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("inputSQL", sql);
         // 发起 POST 请求，接收响应

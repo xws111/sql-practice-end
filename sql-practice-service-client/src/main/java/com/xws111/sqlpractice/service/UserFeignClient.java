@@ -21,7 +21,7 @@ import java.util.List;
 
 @FeignClient(name = "sql-practice-user-service", path = "/api/user/inner")
 public interface UserFeignClient {
-    String USER_LOGIN_STATE = "loginState";
+    String USER_LOGIN_STATE = "USER_LOGIN_STATE";
     /**
      * 根据 id 获取用户
      *
@@ -46,6 +46,7 @@ public interface UserFeignClient {
      * @param request
      * @return
      */
+    @GetMapping("/get/current")
     default User getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);

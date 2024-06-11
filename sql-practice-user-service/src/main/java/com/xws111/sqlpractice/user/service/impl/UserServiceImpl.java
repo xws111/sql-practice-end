@@ -1,7 +1,6 @@
 package com.xws111.sqlpractice.user.service.impl;
 
 
-import com.alibaba.nacos.common.utils.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -17,6 +16,7 @@ import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpractice.user.service.UserService;
 import com.xws111.sqlpractice.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
