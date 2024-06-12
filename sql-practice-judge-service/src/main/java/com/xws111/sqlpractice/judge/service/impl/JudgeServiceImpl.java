@@ -46,7 +46,7 @@ public class JudgeServiceImpl implements JudgeService {
         String code = questionSubmit.getCode();
         ExecuteResult executeResult = postToRemoteApi(code);
         if (executeResult.getJsonResult() == null) {
-            judgeInfo.setResult("sql 语法错误！");
+            judgeInfo.setResult("执行错误，请检查语法问题！");
             judgeInfo.setId(id);
             log.info("已更新数据库中的提交记录。");
             questionFeignClient.updateSubmitResult(judgeInfo);
@@ -65,10 +65,10 @@ public class JudgeServiceImpl implements JudgeService {
         judgeInfo.setId(id);
         if (result) {
             log.info("答案正确！");
-            judgeInfo.setResult("完全正确, 恭喜你又进一步！");
+            judgeInfo.setResult("正确");
         } else {
             log.info("答案错误！");
-            judgeInfo.setResult("错误！动动🧠！");
+            judgeInfo.setResult("错误");
         }
         // 5. 更新数据库结果
         log.info("已更新数据库中的提交记录。");

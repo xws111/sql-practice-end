@@ -56,6 +56,7 @@ public class QuestionInnerController implements QuestionFeignClient {
         questionSubmit.setStatus(2);
         questionSubmit.setId(judgeInfo.getId());
         questionSubmit.setOutput(judgeInfo.getQueryResult());
+        questionSubmit.setDuration(judgeInfo.getTime());
         questionSubmitService.updateById(questionSubmit);
     }
 
