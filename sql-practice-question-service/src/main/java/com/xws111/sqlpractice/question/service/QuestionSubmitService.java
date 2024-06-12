@@ -32,10 +32,10 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
     /**
      * 当前用户提交结果
      * @param request
-     * @param id
+     * @param questionSubmitId
      * @return
      */
-    QuestionSubmitResultVO getSubmitQuestion(HttpServletRequest request, Integer id);
+    QuestionSubmitResultVO getSubmitQuestion(HttpServletRequest request, Long questionSubmitId);
 
     /**
      * 获取查询条件
