@@ -2,10 +2,8 @@ package com.xws111.sqlpractice.user.service.impl;
   
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;  
-import com.xws111.sqlpractice.common.BaseResponse;  
-import com.xws111.sqlpractice.common.ErrorCode;  
-import com.xws111.sqlpractice.common.PageResponse;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.UserMapper;  
 import com.xws111.sqlpractice.model.dto.user.*;  
@@ -14,9 +12,10 @@ import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpractice.user.service.AdminUserService;  
 import lombok.RequiredArgsConstructor;  
 import org.apache.commons.lang3.StringUtils;  
-import org.springframework.stereotype.Service;  
-  
-import java.util.Objects;  
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
   
   
 /**  
@@ -24,7 +23,8 @@ import java.util.Objects;
  * @version 1.0  
  * @description: 后台管理端业务层  
  * @date 2024/6/9 15:31  
- */@Service  
+ */
+@Service
 @RequiredArgsConstructor  
 public class AdminUserServiceImpl extends ServiceImpl<UserMapper, User> implements AdminUserService {  
   
@@ -36,19 +36,21 @@ public class AdminUserServiceImpl extends ServiceImpl<UserMapper, User> implemen
      * @return  
      */  
     @Override  
-    public BaseResponse deleteUser(UserDeleteRequest deleteRequest) {  
-        removeById(deleteRequest.getId());  
-        return BaseResponse.success();  
+    public Boolean deleteUser(UserDeleteRequest deleteRequest) {
+        return removeById(deleteRequest.getId());
     }  
   
-    /**  
-     * 用户模糊查询 分页  
-     * @return  
+    /**
+     * 用户模糊查询 分页
+     *
+     * @return
      */  
-    @Override  
-    public PageResponse fuzzyPageQuery(UserQueryRequest userQueryRequest) {  
-        Page<User> page =  userMapper.fuzzyPageQuery(userQueryRequest);  
-        return PageResponse.success(page, UserVO.class);  
+    @Override
+    public Page<UserVO> fuzzyPageQuery(UserQueryRequest userQueryRequest) {
+        List<UserVO> userVOS = userMapper.fuzzyPageQuery(userQueryRequest);
+        Page<UserVO> page = userQueryRequest.toMpPage();
+        page.setRecords(userVOS);
+        return page;
     }  
   
     /**  
@@ -57,8 +59,13 @@ public class AdminUserServiceImpl extends ServiceImpl<UserMapper, User> implemen
      * @return  
      */  
     @Override  
-    public BaseResponse searchUser(UserSearchRequest searchRequest) {  
-        return BaseResponse.success(getById(searchRequest.getId()));  
+    public UserVO searchUser(UserSearchRequest searchRequest) {
+        User user = getById(searchRequest.getId());
+        if (Objects.isNull(user)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
+        }
+        // DO 转 VO 后返回
+        return BeanUtil.copyProperties(user, UserVO.class);
     }  
   
     /**  
@@ -67,28 +74,27 @@ public class AdminUserServiceImpl extends ServiceImpl<UserMapper, User> implemen
      * @return  
      */  
     @Override  
-    public BaseResponse addUser(UserAddRequest addRequest) {
+    public Boolean addUser(UserAddRequest addRequest) {
         String account = addRequest.getAccount();
-        String userName = addRequest.getUsername();
+        String username = addRequest.getUsername();
         // 参数校验  
         if (StringUtils.isBlank(account) || StringUtils.isAnyBlank(account)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不合规");
         }  
-        if (StringUtils.isBlank(userName) || StringUtils.isAnyBlank(userName)) {
+        if (StringUtils.isBlank(username) || StringUtils.isAnyBlank(username)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名不合规");
         }
 
-        User pre = userMapper.selectByAccount(account);
 
-        if (Objects.nonNull(pre)) {
+        if (Objects.nonNull(userMapper.selectByAccount(account))) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
         }
 
         User user = new User();
+        // 设置默认密码 TODO 后续可能修改
         user.setPassword("123456");
         BeanUtil.copyProperties(addRequest, user);
-        save(user);
-        return BaseResponse.success();  
+        return save(user);
     }  
   
     /**  
@@ -97,16 +103,15 @@ public class AdminUserServiceImpl extends ServiceImpl<UserMapper, User> implemen
      * @return  
      */  
     @Override  
-    public BaseResponse updateUser(UserUpdateRequest userUpdateRequest) {  
+    public Boolean updateUser(UserUpdateRequest userUpdateRequest) {
         // 判断账号是否存在  
-        User pre = getById(userUpdateRequest.getId());  
-        if (Objects.isNull(pre)) {  
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        User oldUser = getById(userUpdateRequest.getId());
+        if (Objects.isNull(oldUser)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号不存在");
         }  
         // 执行更新操作  
         User user = new User();  
-        BeanUtil.copyProperties(userUpdateRequest, user);  
-        updateById(user);  
-        return BaseResponse.success();  
+        BeanUtil.copyProperties(userUpdateRequest, user);
+        return updateById(user);
     }  
 }

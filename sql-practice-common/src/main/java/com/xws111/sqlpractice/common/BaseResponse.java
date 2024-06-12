@@ -23,8 +23,7 @@ public class BaseResponse<T> implements Serializable {
         this.description = description;
     }
 
-    public BaseResponse() {
-    }
+
 
     public BaseResponse(int code, T data, String message) {
         this(code, data, message, "");
@@ -37,13 +36,4 @@ public class BaseResponse<T> implements Serializable {
         this(errorCode.getCode(), null, errorCode.getMessage(), errorCode.getDescription());
     }
 
-    public static BaseResponse success() {
-        return new BaseResponse();
-    }
-
-    public static BaseResponse success(Object data) {
-        BaseResponse baseResponse = new BaseResponse();
-        baseResponse.setData(data);
-        return baseResponse;
-    }
 }
