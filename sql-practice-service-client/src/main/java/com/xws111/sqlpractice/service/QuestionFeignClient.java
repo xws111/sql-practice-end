@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient(name = "sql-practice-question-service", path = "/api/question/inner")
 public interface QuestionFeignClient {
-    @PostMapping("/get")
+    @GetMapping("/get")
     QuestionSubmit getQuestionSubmitById(@RequestParam("id") long id);
 
     @PostMapping("/answer")
