@@ -19,7 +19,7 @@ public interface QuestionFeignClient {
     @GetMapping("/get")
     QuestionSubmit getQuestionSubmitById(@RequestParam("id") long id);
 
-    @PostMapping("/answer")
+    @GetMapping("/answer")
     String getAnswerById(@RequestParam("id") Long id);
     /**
      * 判题结束，更新提交记录状态及结果
