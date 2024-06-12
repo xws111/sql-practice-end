@@ -59,7 +59,7 @@ public class QuestionSubmitController {
      * @return
      */
     @ApiOperation(value = "用户查询提交结果的接口",notes = "questionSubmitResult")
-    @GetMapping("/{id}/result")
+    @GetMapping("/{questionSubmitId}/result")
     public BaseResponse<QuestionSubmitResultVO> questionSubmitResult(HttpServletRequest request, @PathVariable Long questionSubmitId){
         return ResultUtils.success(questionSubmitService.getSubmitQuestion(request, questionSubmitId));
     }

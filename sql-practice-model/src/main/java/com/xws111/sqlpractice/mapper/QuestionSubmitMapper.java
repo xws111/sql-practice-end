@@ -14,8 +14,8 @@ import org.apache.ibatis.annotations.Select;
 * @Entity generator.domain.QuestionSubmit
 */
 public interface QuestionSubmitMapper extends BaseMapper<QuestionSubmit> {
-    @Select("SELECT * from question_submit q where id = #{question_id}")
-    QuestionSubmitResultVO getQuestionSubmitVOById(@Param("submit_id") Long questionSubmitId);
+    @Select("SELECT * from question_submit q where id = #{question_submit_id}")
+    QuestionSubmitResultVO getQuestionSubmitVOById(@Param("question_submit_id") Long questionSubmitId);
 
 }
 
