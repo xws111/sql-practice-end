@@ -64,7 +64,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         questionSubmit.setCode(code);
         questionSubmit.setLanguage(language);
         questionSubmit.setUserId(userId);
-        questionSubmit.setStatus(1);
         //插入数据库
         this.save(questionSubmit);
         long id = questionSubmit.getId();

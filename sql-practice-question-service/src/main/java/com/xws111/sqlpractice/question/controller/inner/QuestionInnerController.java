@@ -53,7 +53,7 @@ public class QuestionInnerController implements QuestionFeignClient {
         }
         QuestionSubmit questionSubmit = new QuestionSubmit();
         questionSubmit.setResult(judgeInfo.getResult());
-        questionSubmit.setStatus(2);
+        questionSubmit.setStatus(judgeInfo.getStatus());
         questionSubmit.setId(judgeInfo.getId());
         questionSubmit.setOutput(judgeInfo.getQueryResult());
         questionSubmit.setDuration(judgeInfo.getTime());
@@ -68,6 +68,5 @@ public class QuestionInnerController implements QuestionFeignClient {
     public void incrementAccepted(Long id) {
         questionMapper.incrementAcceptedCount(id);
     }
-
 
 }

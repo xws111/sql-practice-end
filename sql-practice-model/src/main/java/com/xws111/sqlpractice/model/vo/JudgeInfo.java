@@ -27,4 +27,9 @@ public class JudgeInfo {
      */
     private long time;
 
+    /**
+     * 判题状态
+     */
+    private int status;
+
 }

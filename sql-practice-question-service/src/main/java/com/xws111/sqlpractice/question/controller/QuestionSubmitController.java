@@ -6,6 +6,7 @@ import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
 import com.xws111.sqlpractice.exception.ThrowUtils;
+import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
@@ -34,6 +35,9 @@ public class QuestionSubmitController {
 
     @Resource
     private QuestionSubmitService questionSubmitService;
+
+    @Resource
+    private QuestionSubmitMapper questionSubmitMapper;
 
 
     /**
@@ -99,4 +103,5 @@ public class QuestionSubmitController {
         questionSubmitByUserIdListResponsePage.setRecords(questionSubmitVO);
         return ResultUtils.success(questionSubmitByUserIdListResponsePage);
     }
+
 }

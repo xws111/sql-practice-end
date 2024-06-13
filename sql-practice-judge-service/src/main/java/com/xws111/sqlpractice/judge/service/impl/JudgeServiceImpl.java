@@ -7,7 +7,6 @@ import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.judge.json.JsonUtils;
 import com.xws111.sqlpractice.judge.service.JudgeService;
-import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.docker.ExecuteResult;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
@@ -37,17 +36,25 @@ public class JudgeServiceImpl implements JudgeService {
     @Resource
     private QuestionFeignClient questionFeignClient;
 
+
     @Override
     public JudgeInfo judge(Long id) {
+        // 更新题目提交状态为 判题中 - 1
         JudgeInfo judgeInfo = new JudgeInfo();
+        judgeInfo.setStatus(1);
+        judgeInfo.setId(id);
+        questionFeignClient.updateSubmitResult(judgeInfo);
+
+        QuestionSubmit questionSubmit = new QuestionSubmit();
         // 1. 通过题目 id 拿到提交信息
-        QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(id);
+        questionSubmit = questionFeignClient.getQuestionSubmitById(id);
         // 2. 将题目代码放入远程沙箱跑
         String code = questionSubmit.getCode();
         ExecuteResult executeResult = postToRemoteApi(code);
         if (executeResult.getJsonResult() == null) {
             judgeInfo.setResult("执行错误，请检查语法问题！");
             judgeInfo.setId(id);
+            judgeInfo.setStatus(3);
             log.info("已更新数据库中的提交记录。");
             questionFeignClient.updateSubmitResult(judgeInfo);
             return judgeInfo;
@@ -65,10 +72,12 @@ public class JudgeServiceImpl implements JudgeService {
         judgeInfo.setId(id);
         if (result) {
             log.info("答案正确！");
-            judgeInfo.setResult("正确");
+            judgeInfo.setStatus(2);
+            judgeInfo.setResult("答案正确，恭喜你更进一步！");
         } else {
             log.info("答案错误！");
-            judgeInfo.setResult("错误");
+            judgeInfo.setStatus(3);
+            judgeInfo.setResult("答案错误，恭喜你原地踏步！");
         }
         // 5. 更新数据库结果
         log.info("已更新数据库中的提交记录。");
