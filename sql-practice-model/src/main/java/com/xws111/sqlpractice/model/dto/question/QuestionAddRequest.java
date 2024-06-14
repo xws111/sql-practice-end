@@ -34,7 +34,15 @@ public class QuestionAddRequest implements Serializable {
      */
     private String answer;
 
+    /**
+     * 时间限制
+     */
     private Integer time_limit;
+
+    /**
+     * 难度
+     */
+    private String difficulty;
 
     private static final long serialVersionUID = 1L;
 }

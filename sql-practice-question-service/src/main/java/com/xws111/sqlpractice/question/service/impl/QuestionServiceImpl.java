@@ -107,11 +107,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Override
     public QuestionVO getQuestionVOById(Long id, HttpServletRequest request) {
+        // 登录后才能获取题目详细信息
         User user = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-
         QuestionVO questionVO = questionMapper.getQuestionContent(id);
         List<String> tags = tagMapper.getTagNamesByQuestionId(id);
         questionVO.setTags(tags);

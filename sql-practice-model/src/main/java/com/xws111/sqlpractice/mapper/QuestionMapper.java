@@ -36,7 +36,7 @@ public interface QuestionMapper extends BaseMapper<Question> {
             "LEFT JOIN tag t ON t.id = qt.tag_id")
     List<QuestionTagVO> getAllQuestionTags();
 
-    @Select("SELECT q.id, q.title, q.content, q.time_limit, q.submit_num as submitNum, q.accepted " +
+    @Select("SELECT q.id, q.title, q.content, q.time_limit, q.submit_num as submitNum, q.accepted, q.difficulty " +
         "FROM question q " +
         "WHERE q.id = #{id}"
     )

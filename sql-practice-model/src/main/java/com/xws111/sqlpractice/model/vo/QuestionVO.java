@@ -46,6 +46,11 @@ public class QuestionVO implements Serializable {
     private Integer timeLimit;
 
     /**
+     * 题目难度
+     */
+    private String difficulty;
+
+    /**
      * 标签列表
      */
     private List<String> tags;

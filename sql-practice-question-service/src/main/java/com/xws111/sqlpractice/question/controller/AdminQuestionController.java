@@ -42,7 +42,6 @@ public class AdminQuestionController {
     @ApiOperation("管理员新增问题接口")
     @PostMapping("/add")
     @Transactional
-    //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Long> addQuestion(@RequestBody QuestionAddRequest questionAddRequest, HttpServletRequest request) {
         if (questionAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

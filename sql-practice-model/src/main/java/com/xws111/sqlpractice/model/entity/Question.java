@@ -65,6 +65,11 @@ public class Question implements Serializable {
     private Date updateTime;
 
     /**
+     * 题目难度
+     */
+    private String difficulty;
+
+    /**
      * 0 正常   1 删除
      */
     @TableLogic
