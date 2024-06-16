@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
@@ -130,7 +129,7 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     }
 
     @Override
-    public PageInfo<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request) {
+    public List<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request) {
         String title = questionListRequest.getTitle();
         String content = questionListRequest.getContent();
         if (StringUtils.isNotBlank(title)) {
@@ -141,7 +140,7 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
         }
         PageHelper.startPage(questionListRequest.getCurrent(), questionListRequest.getPageSize());
         List<QuestionAllVO> questionAllVOByRequest = questionMapper.getQuestionAllVOByRequest(questionListRequest);
-        return new PageInfo<>(questionAllVOByRequest);
+        return questionAllVOByRequest;
 
     }
 

@@ -3,7 +3,6 @@ package com.xws111.sqlpractice.question.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.vo.QuestionAllVO;
@@ -52,7 +51,7 @@ public interface AdminQuestionService extends IService<Question> {
      * @param request
      * @return
      */
-    PageInfo<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request);
+    List<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request);
 
     Page<QuestionListVO> getQuestionList(long current, long size);
     //给问题添加标签

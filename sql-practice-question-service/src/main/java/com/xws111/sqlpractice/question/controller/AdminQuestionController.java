@@ -170,7 +170,7 @@ public class AdminQuestionController {
     @ApiOperation("获取问题列表接口")
     @GetMapping("/list/page")
     //    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<PageInfo<QuestionAllVO>> listQuestionVOByPage(@ModelAttribute QuestionListRequest questionListRequest, HttpServletRequest request) {
+    public BaseResponse<List<QuestionAllVO>> listQuestionVOByPage(@ModelAttribute QuestionListRequest questionListRequest, HttpServletRequest request) {
         // 需要管理员权限
         User loginUser = userFeignClient.getLoginUser(request);
         if (loginUser.getRole() == 0) {
