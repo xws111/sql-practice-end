@@ -1,33 +1,27 @@
 package com.xws111.sqlpractice.question.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.ErrorCode;
-import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
-import com.xws111.sqlpractice.mapper.QuestionTagMapper;
 import com.xws111.sqlpractice.mapper.TagMapper;
-import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
+import com.xws111.sqlpractice.model.dto.question.AdminQuestionRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.entity.QuestionTag;
 import com.xws111.sqlpractice.model.entity.Tag;
-import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.vo.*;
 import com.xws111.sqlpractice.question.service.AdminQuestionService;
 import com.xws111.sqlpractice.question.service.QuestionTagService;
 import com.xws111.sqlpractice.question.service.TagService;
 import com.xws111.sqlpractice.service.UserFeignClient;
-import com.xws111.sqlpractice.utils.SqlUtils;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -53,8 +47,6 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     @Resource
     private QuestionTagService questionTagService;
 
-    @Resource
-    private QuestionTagMapper questionTagMapper;
 
     /**
      * 校验题目是否合法
@@ -87,83 +79,18 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
         }
     }
 
-    /**
-     * 获取查询包装类（用户根据哪些字段查询，根据前端传来的请求对象，得到 mybatis 框架支持的查询 QueryWrapper 类）
-     *
-     * @param questionListRequest
-     * @return
-     */
+
     @Override
-    public QueryWrapper<Question> getQueryWrapper(QuestionListRequest questionListRequest) {
-        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
-        if (questionListRequest == null) {
-            return queryWrapper;
-        }
+    public PageInfo getQuestionList(AdminQuestionRequest questionListRequest, Integer current, Integer pageSize) {
         Long id = questionListRequest.getId();
         String title = questionListRequest.getTitle();
-        String content = questionListRequest.getContent();
         List<String> tags = questionListRequest.getTags();
-        String sortField = questionListRequest.getSortField();
-        String sortOrder = questionListRequest.getSortOrder();
-        // 拼接查询条件
-        queryWrapper.eq(id > 0, "id", id);
-        queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
-        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
-        queryWrapper.like(StringUtils.isNotBlank(content), "content", content);
-        queryWrapper.eq("is_deleted", false);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
-        return queryWrapper;
+        Integer difficulty = questionListRequest.getDifficulty();
+        PageHelper.startPage(current, pageSize);
+        List<Question> questionList = questionMapper.getQuestionsList(id, title, tags, difficulty);
+        return new PageInfo(questionList);
     }
 
-    @Override
-    public QuestionVO getQuestionVOById(Long id, HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
-        if (user == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
-        QuestionVO questionVO = questionMapper.getQuestionContent(id);
-        List<String> tags = tagMapper.getTagNamesByQuestionId(id);
-        questionVO.setTags(tags);
-        return questionVO;
-    }
-
-    @Override
-    public List<QuestionAllVO> getQuestionVOPage(QuestionListRequest questionListRequest, HttpServletRequest request) {
-        String title = questionListRequest.getTitle();
-        String content = questionListRequest.getContent();
-        if (StringUtils.isNotBlank(title)) {
-            questionListRequest.setTitle("%" + title + "%");
-        }
-        if (StringUtils.isNotBlank(content)) {
-            questionListRequest.setTitle("%" + content + "%");
-        }
-        PageHelper.startPage(questionListRequest.getCurrent(), questionListRequest.getPageSize());
-        List<QuestionAllVO> questionAllVOByRequest = questionMapper.getQuestionAllVOByRequest(questionListRequest);
-        return questionAllVOByRequest;
-
-    }
-
-    @Override
-    public Page<QuestionListVO> getQuestionList(long current, long size) {
-        Page<QuestionListVO> page = new Page<>(current, size);
-
-        List<QuestionListVO> questionListVO = questionMapper.getAllQuestions();
-        List<QuestionTagVO> tags = questionMapper.getAllQuestionTags();
-        // 建立问题 ID 到标签列表的映射
-        Map<Long, List<String>> questionToTags = new HashMap<>();
-        for (QuestionTagVO questionTag : tags) {
-            questionToTags
-                    .computeIfAbsent(questionTag.getQuestionId(), k -> new ArrayList<>())
-                    .add(questionTag.getTagName());
-        }
-        // 将标签列表合并到问题对象中
-        for (QuestionListVO question : questionListVO) {
-            question.setTags(questionToTags.getOrDefault(question.getId(), Collections.emptyList()));
-        }
-        page.setRecords(questionListVO);
-        return page;
-    }
 
     @Override
     // todo 有待优化：批量保存、动态 sql
@@ -199,22 +126,6 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
 
     }
 
-    @Override
-    public QuestionAllVO selectQuestionTag(Question question) {
-        Long id = question.getId();
-        QueryWrapper<QuestionTag> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("question_id", id);
-        List<QuestionTag> questionTagList = questionTagService.list(queryWrapper);
-        QuestionAllVO questionAllVO = new QuestionAllVO();
-        List<String> tagList = new ArrayList<>();
-        for (QuestionTag questionTag : questionTagList) {
-            Tag tag = tagService.getById(questionTag.getTagId());
-            tagList.add(tag.getName());
-        }
-        questionAllVO.setTags(tagList);
-        BeanUtils.copyProperties(question, questionAllVO);
-        return questionAllVO;
-    }
 
 
 }

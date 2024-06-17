@@ -20,6 +20,13 @@ public interface TagMapper extends BaseMapper<Tag> {
             "LEFT JOIN question_tag qt ON t.id = qt.tag_id " +
             "WHERE qt.question_id = #{questionId}")
     List<String> getTagNamesByQuestionId(@Param("questionId") Long id);
+
+    /**
+     * 取出指定问题的标签
+     * @param id
+     * @return
+     */
+    List<String> getTagsByQuestionId(@Param("id") Long id);
 }
 
 

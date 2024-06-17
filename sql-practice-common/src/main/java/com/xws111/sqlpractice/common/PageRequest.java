@@ -34,9 +34,4 @@ public class PageRequest {
      */
     private String sortOrder = CommonConstant.SORT_ORDER_ASC;
 
-    /**
-     * 查询参数
-     */
-    private Map<String, Object> params = new HashMap<>();
-
 }

@@ -67,7 +67,7 @@ public class Question implements Serializable {
     /**
      * 题目难度
      */
-    private String difficulty;
+    private Integer difficulty;
 
     /**
      * 0 正常   1 删除

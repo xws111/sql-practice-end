@@ -1,19 +1,18 @@
 package com.xws111.sqlpractice.model.dto.question;
 
+import com.xws111.sqlpractice.common.PageRequest;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * 编辑请求
- *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * @Description:
+ * @Date 2024/6/17 12:24
+ * @Version 1.0
+ * @Author xg
  */
 @Data
-public class QuestionEditRequest implements Serializable {
-
+public class AdminQuestionRequest {
     /**
      * id
      */
@@ -25,7 +24,7 @@ public class QuestionEditRequest implements Serializable {
     private String title;
 
     /**
-     * 内容
+     * 题目描述
      */
     private String content;
 
@@ -40,14 +39,14 @@ public class QuestionEditRequest implements Serializable {
     private String answer;
 
     /**
-     * 判题用例
+     * 时间限制
      */
-    private List<JudgeCase> judgeCase;
+    private Integer timeLimit;
 
     /**
-     * 判题配置
+     * 难度
      */
-    private JudgeConfig judgeConfig;
+    private Integer difficulty;
 
     private static final long serialVersionUID = 1L;
 }

@@ -1,49 +1,54 @@
 package com.xws111.sqlpractice.model.vo;
 
-
-
-import com.xws111.sqlpractice.model.entity.Question;
-import lombok.Data;
-import org.springframework.beans.BeanUtils;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
+import lombok.Data;
+
 /**
- * 单个题目
- * @TableName question
+ * 题目详细信息 VO 类
  */
 @Data
 public class QuestionVO implements Serializable {
     /**
-     * id
+     * 题号
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 标题
+     * 题目
      */
     private String title;
 
     /**
-     * 内容
+     * 题目描述
      */
     private String content;
 
     /**
-     * 题目提交数
-     */
-    private Integer submitNum;
-
-    /**
-     * 题目通过数
-     */
-    private Integer accepted;
-
-    /**
-     * 时间限制
+     * 时间限制 ms
      */
     private Integer timeLimit;
+
+    /**
+     * 收藏数
+     */
+    private Integer favorNum;
+
+    /**
+     * 提交数
+     */
+    private Long submitNum;
+
+    /**
+     * 通过数
+     */
+    private Long accepted;
+
 
     /**
      * 题目难度
@@ -51,10 +56,10 @@ public class QuestionVO implements Serializable {
     private String difficulty;
 
     /**
-     * 标签列表
+     * 题目标签
      */
     private List<String> tags;
 
-
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PageResponse {
+public class PageList<T> {
     /**
      * 当前页码
      */
@@ -21,6 +21,6 @@ public class PageResponse {
     /**
      * 分页数据
      */
-    private List<?> content;
+    private List<T> content;
 
 }

@@ -30,6 +30,11 @@ public class Tag implements Serializable {
     private Date createTime;
 
     /**
+     * 标签颜色
+     */
+    private String color;
+
+    /**
      * 0正常，1删除
      */
     @TableLogic

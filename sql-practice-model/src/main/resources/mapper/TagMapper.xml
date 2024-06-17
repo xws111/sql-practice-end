@@ -8,11 +8,21 @@
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="color" column="color" jdbcType="VARCHAR"/>
             <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,create_time,
+        id,name, color, create_time,
         is_deleted
     </sql>
+
+    <!-- 选择问题标签 -->
+    <select id="getTagsByQuestionId" resultType="java.lang.String">
+        SELECT t.name
+        FROM tag t
+                 LEFT JOIN question_tag qt ON t.id = qt.tag_id
+        WHERE qt.question_id = #{id}
+    </select>
+
 </mapper>

@@ -3,7 +3,6 @@ package com.xws111.sqlpractice.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitResultVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -15,7 +14,7 @@ import org.apache.ibatis.annotations.Select;
 */
 public interface QuestionSubmitMapper extends BaseMapper<QuestionSubmit> {
     @Select("SELECT * from question_submit q where id = #{question_submit_id}")
-    QuestionSubmitResultVO getQuestionSubmitVOById(@Param("question_submit_id") Long questionSubmitId);
+    QuestionSubmit getQuestionSubmitVOById(@Param("question_submit_id") Long questionSubmitId);
 
 }
 

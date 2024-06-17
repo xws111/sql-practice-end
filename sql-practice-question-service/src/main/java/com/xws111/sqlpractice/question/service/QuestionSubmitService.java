@@ -1,14 +1,10 @@
 package com.xws111.sqlpractice.question.service;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
-import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitResultVO;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -30,38 +26,12 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
 
 
     /**
-     * 当前用户提交结果
+     * 获取用户某道题目的所有提交信息
      * @param request
-     * @param questionSubmitId
+     * @param questionId
      * @return
      */
-    QuestionSubmitResultVO getSubmitQuestion(HttpServletRequest request, Long questionSubmitId);
+    List<QuestionSubmit> getQuestionSubmissionByQuestionId(HttpServletRequest request, Long questionId);
 
-    /**
-     * 获取查询条件
-     *
-     * @param questionSubmitQueryRequest
-     * @return
-     */
-    QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
-
-
-    QueryWrapper<QuestionSubmit> getUserQueryWrapper(HttpServletRequest request);
-
-    /**
-     * 获取题目封装
-     *
-     * @param questionSubmit
-     * @return
-     */
-    QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit);
-
-    /**
-     * 分页获取题目封装
-     *
-     * @param questionSubmitPage
-     * @return
-     */
-    List<QuestionSubmitVO> getQuestionSubmitVOPage(List<QuestionSubmit> questionSubmitPage);
 
 }

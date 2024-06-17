@@ -1,17 +1,19 @@
 package com.xws111.sqlpractice.question.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.BaseResponse;
 
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
 import com.xws111.sqlpractice.exception.ThrowUtils;
+import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitResultVO;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
@@ -46,35 +48,35 @@ public class QuestionSubmitController {
      * @param questionSubmitAddRequest
      * @return
      */
-    @ApiOperation(value = "用户提交代码接口",notes = "questionSubmit")
+    @ApiOperation(value = "用户提交代码接口",notes = "用户提交代码接口")
     @PostMapping("/add")
     public BaseResponse<Long> questionSubmit(HttpServletRequest request,
                                              @RequestBody @Valid QuestionSubmitAddRequest questionSubmitAddRequest) {
             // 登录才提交
             final User loginUser = userFeignClient.getLoginUser(request);
+
             long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
             return ResultUtils.success(questionSubmitId);
     }
 
     /**
-     * 用户查询提交结果的接口
+     * 用户查询某个问题的提交历史记录，用于做题界面展示
      * @param request
-     * @param questionSubmitId
      * @return
      */
-    @ApiOperation(value = "用户查询提交结果的接口",notes = "questionSubmitResult")
-    @GetMapping("/{questionSubmitId}/result")
-    public BaseResponse<QuestionSubmitResultVO> questionSubmitResult(HttpServletRequest request, @PathVariable Long questionSubmitId){
-        return ResultUtils.success(questionSubmitService.getSubmitQuestion(request, questionSubmitId));
+    @ApiOperation(value = "用户查询某问题提交记录接口",notes = "用户查询某问题提交记录接口")
+    @GetMapping("/result")
+    public BaseResponse<List<QuestionSubmit>> questionSubmitResult(HttpServletRequest request, @RequestParam Long questionId){
+        return ResultUtils.success(questionSubmitService.getQuestionSubmissionByQuestionId(request, questionId));
     }
 
     /**
-     * 用户查询结果接口
+     * 用户查询结果接口, 以不断访问此接口的形式让用户等待结果
      * @param questionId
      * @return
      */
     //TODO 不查询未成功的
-    @ApiOperation(value = "用户查询结果接口",notes = "querySubmissionsByQuestionId")
+    @ApiOperation(value = "用户查询结果接口",notes = "用户查询结果接口")
     @GetMapping("/{questionId}/submissions")
     public BaseResponse<QuestionSubmit> querySubmissionsByQuestionId (@PathVariable long questionId) {
         return ResultUtils.success(questionSubmitService.getById(questionId));
@@ -82,7 +84,7 @@ public class QuestionSubmitController {
 
 
     /**
-     * 获取当前用户的所有提交记录
+     * 获取当前用户的所有问题的提交记录，用于个人中心进行展示
      * @param request
      * @param current
      * @param size
@@ -90,18 +92,18 @@ public class QuestionSubmitController {
      */
     @ApiOperation(value = "获取当前用户的所有提交记录",notes = "querySubmissionsList")
     @GetMapping("/submissions/list")
-    public BaseResponse<Page<QuestionSubmitVO>> querySubmissionsList(HttpServletRequest request, long current, long size) {
+    public BaseResponse<PageInfo<QuestionSubmit>> querySubmissionsList(HttpServletRequest request, @RequestParam(defaultValue = "1") Integer current,@RequestParam(defaultValue = "10") Integer size) {
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        Page<QuestionSubmit> questionSubmitPage = questionSubmitService.page(new Page<>(current, size),
-                questionSubmitService.getUserQueryWrapper(request));
-        Page<QuestionSubmitVO> questionSubmitByUserIdListResponsePage = new Page<>(current, size, questionSubmitPage.getTotal());
-        log.info(questionSubmitByUserIdListResponsePage.toString());
-//        questionSubmitService.get
-//        questionSubmitByUserIdListResponsePage.setRecords()
-        List<QuestionSubmitVO> questionSubmitVO = questionSubmitService.getQuestionSubmitVOPage(questionSubmitPage.getRecords());
-        questionSubmitByUserIdListResponsePage.setRecords(questionSubmitVO);
-        return ResultUtils.success(questionSubmitByUserIdListResponsePage);
+
+        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
+        Long userId = loginUser.getId();
+        QueryWrapper<QuestionSubmit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        PageHelper.startPage(current, size);
+        List<QuestionSubmit> questionSubmitPage = questionSubmitMapper.selectList(queryWrapper);
+        PageInfo pageInfo = new PageInfo(questionSubmitPage);
+        return ResultUtils.success(pageInfo);
     }
 
 }

@@ -1,11 +1,11 @@
 package com.xws111.sqlpractice.question.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
@@ -15,7 +15,6 @@ import com.xws111.sqlpractice.mapper.TagMapper;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.vo.QuestionTagVO;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 import com.xws111.sqlpractice.question.service.QuestionService;
@@ -26,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -47,6 +47,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Resource
     private QuestionMapper questionMapper;
+
 
     /**
      * 校验题目是否合法
@@ -112,7 +113,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        QuestionVO questionVO = questionMapper.getQuestionContent(id);
+        QuestionVO questionVO = new QuestionVO();
+        BeanUtils.copyProperties(this.getById(id), questionVO);
         List<String> tags = tagMapper.getTagNamesByQuestionId(id);
         questionVO.setTags(tags);
         return questionVO;
@@ -121,32 +123,22 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public Page<QuestionListVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request) {
         List<Question> questionList = questionPage.getRecords();
-        Page<QuestionListVO> questionVOPage = new Page<>(questionPage.getCurrent(),
-                questionPage.getSize(), questionPage.getTotal());
-        if (CollectionUtils.isEmpty(questionList)) {
-            return questionVOPage;
-        }
-        return questionVOPage;
+        return null;
     }
 
     @Override
-    public List<QuestionListVO> getQuestionList(int current, int size) {
-        PageHelper.startPage(current, size);
-        List<QuestionListVO> questionListVO = questionMapper.getAllQuestions();
-        List<QuestionTagVO> tags = questionMapper.getAllQuestionTags();
-        // 建立问题 ID 到标签列表的映射
-        Map<Long, List<String>> questionToTags = new HashMap<>();
-        for (QuestionTagVO questionTag : tags) {
-            questionToTags
-                    .computeIfAbsent(questionTag.getQuestionId(), k -> new ArrayList<>())
-                    .add(questionTag.getTagName());
-        }
-        // 将标签列表合并到问题对象中
-        for (QuestionListVO question : questionListVO) {
-            question.setTags(questionToTags.getOrDefault(question.getId(), Collections.emptyList()));
-        }
-
-        return questionListVO;
+    public PageInfo<QuestionListVO> getQuestionListPage(QuestionListRequest pageRequest) {
+        // 分页插件
+        PageHelper.startPage(pageRequest.getCurrent(), pageRequest.getPageSize());
+        Long id = pageRequest.getId();
+        String keyword = pageRequest.getTitle();
+        // todo 排序
+        String sortField = pageRequest.getSortField();
+        String sortOrder = pageRequest.getSortOrder();
+        // 根据 id、标题分页获取题目信息
+        List<QuestionListVO> questionListVO = questionMapper.getQuestionsVOList(id, keyword);
+        PageInfo<QuestionListVO> pageInfo = new PageInfo<>(questionListVO);
+        return pageInfo;
     }
 
 }

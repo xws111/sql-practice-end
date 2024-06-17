@@ -1,31 +1,24 @@
 package com.xws111.sqlpractice.question.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
-import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitResultVO;
-import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 import com.xws111.sqlpractice.question.rocketmq.MQProducer;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
 * @author xg
@@ -77,53 +70,18 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     }
 
     @Override
-    public QuestionSubmitResultVO getSubmitQuestion(HttpServletRequest request, Long questionSubmitId) {
-        //获取当前用户
-        User loginUser = userFeignClient.getLoginUser(request);
-        //查询
-        return questionSubmitMapper.getQuestionSubmitVOById(questionSubmitId);
-    }
-
-    @Override
-    public QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest) {
-        return null;
-    }
-
-    @Override
-    public QueryWrapper<QuestionSubmit> getUserQueryWrapper(HttpServletRequest request) {
-        //获取当前用户id
-        User loginUser = userFeignClient.getLoginUser(request);
-        Long userId = loginUser.getId();
-        if(null == userId){
-            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR,"请登录");
+    public List<QuestionSubmit> getQuestionSubmissionByQuestionId(HttpServletRequest request, Long questionId) {
+        // 判断登录
+        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
+        if (loginUser.getId() <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        QueryWrapper<QuestionSubmit> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
-        queryWrapper.isNotNull("result");
-        return queryWrapper;
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", loginUser.getId());
+        queryWrapper.eq("question_id", questionId);
+        return questionSubmitMapper.selectList(queryWrapper);
     }
 
-    @Override
-    public QuestionSubmitVO getQuestionSubmitVO(QuestionSubmit questionSubmit) {
-        if(questionSubmit == null){
-            return null;
-        }
-        QuestionSubmitVO questionSubmitVO = new QuestionSubmitVO();
-        BeanUtils.copyProperties(questionSubmit, questionSubmitVO);
-        return questionSubmitVO;
-    }
-
-    @Override
-    public List<QuestionSubmitVO> getQuestionSubmitVOPage(List<QuestionSubmit> questionSubmitPage) {
-//        if (CollectionUtils.isEmpty(userList)) {
-//            return new ArrayList<>();
-//        }
-//        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(questionSubmitPage)){
-            return new ArrayList<>();
-        }
-        return questionSubmitPage.stream().map(this::getQuestionSubmitVO).collect(Collectors.toList());
-    }
 }
 
 

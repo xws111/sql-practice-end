@@ -1,20 +1,11 @@
 package com.xws111.sqlpractice.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
 import com.xws111.sqlpractice.model.entity.Question;
-import com.xws111.sqlpractice.model.vo.QuestionAllVO;
-import com.xws111.sqlpractice.model.vo.QuestionTagVO;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
-import com.xws111.sqlpractice.model.vo.QuestionVO;
-import com.xws111.sqlpractice.provider.QuestionSqlProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
@@ -26,21 +17,32 @@ import java.util.List;
 */
 public interface QuestionMapper extends BaseMapper<Question> {
 
+    /**
+     * 用户根据 id、标题 分页获取问题列表
+     *
+     * @param id
+     * @param keyword
 
-    @Select("SELECT q.id as id, q.title as title, q.submit_num as submitNum, q.accepted as accepted " +
-            "FROM question q")
-    List<QuestionListVO> getAllQuestions();
+     * @return
+     */
+    List<QuestionListVO> getQuestionsVOList(@Param("id") Long id,
+                                            @Param("keyword") String keyword);
 
-    @Select("SELECT qt.question_id as questionId, t.name as tagName " +
-            "FROM question_tag qt " +
-            "LEFT JOIN tag t ON t.id = qt.tag_id")
-    List<QuestionTagVO> getAllQuestionTags();
 
-    @Select("SELECT q.id, q.title, q.content, q.time_limit, q.submit_num as submitNum, q.accepted, q.difficulty " +
-        "FROM question q " +
-        "WHERE q.id = #{id}"
-    )
-    QuestionVO getQuestionContent(@Param("id") Long id);
+    /**
+     * 管理员获取问题列表
+     * @param id
+     * @param title
+     * @param tags
+     * @param difficulty
+     * @return
+     */
+    List<Question> getQuestionsList(@Param("id") Long id,
+                                    @Param("title") String title,
+                                    @Param("tags") List<String> tags,
+                                    @Param("difficulty") Integer difficulty);
+
+
 
     @Select("SELECT question.answer FROM question WHERE id = #{id}")
     String getQuestionAnswerById(@Param("id") Long id);
@@ -48,11 +50,12 @@ public interface QuestionMapper extends BaseMapper<Question> {
     @Update("UPDATE question SET submit_num = question.submit_num + 1 WHERE id = #{questionId}")
     void incrementSubmitCount(@Param("questionId") Long questionId);
 
+    /**
+     * 题目提交数 +1
+     * @param questionId
+     */
     @Update("UPDATE question SET accepted = question.accepted + 1 WHERE id = #{questionId}")
     void incrementAcceptedCount(@Param("questionId") Long questionId);
-
-    @SelectProvider(type = QuestionSqlProvider.class, method = "getQuestionAllVOByRequest")
-    List<QuestionAllVO> getQuestionAllVOByRequest(QuestionListRequest request);
 
 }
 

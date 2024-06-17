@@ -1,5 +1,6 @@
 package com.xws111.sqlpractice.question.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
@@ -16,13 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
-
-import java.util.List;
 
 /**
  * 用户获取题目信息接口
@@ -64,13 +59,13 @@ public class QuestionController {
      */
     @ApiOperation(value = "分页获取所有题目列表接口", notes = "分页获取所有题目列表接口")
     @GetMapping("/list/page")
-    public BaseResponse<List<QuestionListVO>> listQuestionByPage(@ModelAttribute QuestionListRequest questionListRequest) {
+    public BaseResponse<PageInfo<QuestionListVO>> listQuestionByPage(@ModelAttribute QuestionListRequest questionListRequest) {
 
         int current = questionListRequest.getCurrent();
         int size = questionListRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        List<QuestionListVO> page = questionService.getQuestionList(current, size);
+        PageInfo<QuestionListVO> page = questionService.getQuestionListPage(questionListRequest);
         return ResultUtils.success(page);
     }
 
