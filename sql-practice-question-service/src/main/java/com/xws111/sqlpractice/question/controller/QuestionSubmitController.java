@@ -65,7 +65,7 @@ public class QuestionSubmitController {
      * @return
      */
     @ApiOperation(value = "用户查询某问题提交记录接口",notes = "用户查询某问题提交记录接口")
-    @GetMapping("/result")
+    @GetMapping("/{questionId}/submissions")
     public BaseResponse<List<QuestionSubmit>> questionSubmitResult(HttpServletRequest request, @RequestParam Long questionId){
         return ResultUtils.success(questionSubmitService.getQuestionSubmissionByQuestionId(request, questionId));
     }
@@ -77,7 +77,7 @@ public class QuestionSubmitController {
      */
     //TODO 不查询未成功的
     @ApiOperation(value = "用户查询结果接口",notes = "用户查询结果接口")
-    @GetMapping("/{questionId}/submissions")
+    @GetMapping("/{questionId}/result")
     public BaseResponse<QuestionSubmit> querySubmissionsByQuestionId (@PathVariable long questionId) {
         return ResultUtils.success(questionSubmitService.getById(questionId));
     }

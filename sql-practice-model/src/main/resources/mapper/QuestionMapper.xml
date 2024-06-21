@@ -31,7 +31,6 @@
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="favorNum" column="favor_num" jdbcType="INTEGER"/>
         <result property="submitNum" column="submit_num" jdbcType="BIGINT"/>
-        <result property="timeLimit" column="time_limit" jdbcType="INTEGER"/>
         <result property="accepted" column="accepted" jdbcType="BIGINT"/>
         <result property="difficulty" column="difficulty" jdbcType="VARCHAR"/>
     </resultMap>
@@ -48,6 +47,7 @@
             <if test="id != null">
                 AND q.id = #{id}
             </if>
+            AND q.is_deleted = 0
         </where>
         GROUP BY q.id
         ORDER BY q.id

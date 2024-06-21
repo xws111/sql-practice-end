@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户获取题目信息接口
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/question")
 @Api(tags = "用户获取题目信息接口")
 @Slf4j
 public class QuestionController {
@@ -61,7 +61,6 @@ public class QuestionController {
     @GetMapping("/list/page")
     public BaseResponse<PageInfo<QuestionListVO>> listQuestionByPage(@ModelAttribute QuestionListRequest questionListRequest) {
 
-        int current = questionListRequest.getCurrent();
         int size = questionListRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
