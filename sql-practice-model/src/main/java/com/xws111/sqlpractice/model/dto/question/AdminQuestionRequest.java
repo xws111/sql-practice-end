@@ -12,7 +12,8 @@ import java.util.List;
  * @Author xg
  */
 @Data
-public class AdminQuestionRequest {
+public class
+AdminQuestionRequest {
     /**
      * id
      */

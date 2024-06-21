@@ -65,15 +65,15 @@ public class AdminQuestionController {
     /**
      * 删除
      *
-     * @param deleteRequest
+     * @param id
      * @param request
      * @return
      */
     @ApiOperation("管理员删除问题接口")
     @PostMapping("/delete")
     @Transactional
-    public BaseResponse<Boolean> deleteQuestion(@RequestBody AdminQuestionRequest deleteRequest, HttpServletRequest request) {
-        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+    public BaseResponse<Boolean> deleteQuestion(@RequestBody Long id, HttpServletRequest request) {
+        if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // 需要管理员权限
@@ -81,7 +81,6 @@ public class AdminQuestionController {
         if (loginUser.getRole() == 0) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "您无权操作");
         }
-        long id = deleteRequest.getId();
         // 判断是否存在
         Question oldQuestion = adminQuestionService.getById(id);
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);

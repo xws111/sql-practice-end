@@ -102,6 +102,7 @@
                     #{tag}
                 </foreach>
             </if>
+            AND q.is_deleted = 0
         </where>
         GROUP BY
         q.id

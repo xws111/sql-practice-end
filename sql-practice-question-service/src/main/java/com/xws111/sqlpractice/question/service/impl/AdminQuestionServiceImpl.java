@@ -8,6 +8,7 @@ import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
+import com.xws111.sqlpractice.mapper.QuestionTagMapper;
 import com.xws111.sqlpractice.mapper.TagMapper;
 import com.xws111.sqlpractice.model.dto.question.AdminQuestionRequest;
 import com.xws111.sqlpractice.model.entity.Question;
@@ -18,6 +19,7 @@ import com.xws111.sqlpractice.question.service.QuestionTagService;
 import com.xws111.sqlpractice.question.service.TagService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import io.swagger.models.auth.In;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,7 @@ import java.util.*;
  * @createDate 2024-05-03 22:03:56
  */
 @Service
+@Slf4j
 public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         implements AdminQuestionService {
 
@@ -37,7 +40,7 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     private UserFeignClient userFeignClient;
 
     @Resource
-    private TagMapper tagMapper;
+    private QuestionTagMapper questionTagMapper;
 
     @Resource
     private QuestionMapper questionMapper;
@@ -117,12 +120,9 @@ public class AdminQuestionServiceImpl extends ServiceImpl<QuestionMapper, Questi
     public void removeQuestionTag(Long id) {
         QueryWrapper<QuestionTag> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("question_id", id);
-        List<QuestionTag> questionTagList = questionTagService.list(queryWrapper);
-
-        Long questionTagId = questionTagList.get(0).getQuestionId();
         //删除关联表的数据
-        boolean result = questionTagService.removeById(questionTagId);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        int result = questionTagMapper.delete(queryWrapper);
+        log.info("删除了" + result + "行关系表");
 
     }
 
