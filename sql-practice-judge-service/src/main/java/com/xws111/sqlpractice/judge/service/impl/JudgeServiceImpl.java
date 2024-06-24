@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
@@ -87,7 +88,7 @@ public class JudgeServiceImpl implements JudgeService {
 
     private ExecuteResult postToRemoteApi(String sql) {
         // 设置请求 URL 和请求体
-        String url = "http://38.181.145.191:8080/execute";
+        String url = "http://154.12.22.251:8080/execute";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("inputSQL", sql);
         // 发起 POST 请求，接收响应
