@@ -1,33 +1,4 @@
-spring:
-  application:
-    name: sql-practice-user-service
-  #session失效时间(分钟)
-  session:
-    timeout: 4377600
-    store-type: redis
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: xg
-    password: Dbase2122!
-    url: jdbc:mysql://rm-uf6jlnk6v4r5jemjsio.mysql.rds.aliyuncs.com:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-  #redis
-  redis:
-    port: 6379
-    host: 47.116.196.137
-    database: 0
-    password: sqlpractice
-  jackson:
-    date-format: yyyy-MM-dd
-    timeZone: Asia/Shanghai
-  cloud:
-    nacos:
-      discovery:
-        register-enabled: true
-        server-addr: 47.116.196.137:8848
-        # 改为自己的 nacos 命名空间
-        namespace: xws111
 server:
-  port: 9101
   servlet:
     context-path: /api/user
     session:

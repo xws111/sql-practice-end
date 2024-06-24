@@ -1,20 +1,5 @@
 spring:
-  #session失效时间(分钟)
-  session:
-    timeout: 43776
-    store-type: redis
-  #redis
-  redis:
-    port: 6379
-    host: 47.116.196.137
-    database: 0
-    password: sqlpractice
   cloud:
-    nacos:
-      discovery:
-        server-addr: 47.116.196.137:8848
-        # 改为自己的 nacos 命名空间
-        namespace: xws111
     gateway:
       discovery:
         locator:
@@ -32,12 +17,9 @@ spring:
           uri: lb://sql-practice-judge-service
           predicates:
             - Path=/api/judge/**
-  application:
-    name: sql-practice-gateway
   main:
     web-application-type: reactive
 server:
-  port: 9111
   servlet:
     session:
       cookie:

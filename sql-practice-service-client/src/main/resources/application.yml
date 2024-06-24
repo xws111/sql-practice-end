@@ -1,21 +1,3 @@
-spring:
-  #session失效时间(分钟)
-  session:
-    timeout: 43776
-    store-type: redis
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 47.116.196.137:8848
-  #redis
-  redis:
-    port: 6379
-    host: 47.116.196.137
-    database: 0
-    password: sqlpractice
-  jackson:
-    date-format: yyyy-MM-dd
-    timeZone: Asia/Shanghai
 server:
   servlet:
     session:
