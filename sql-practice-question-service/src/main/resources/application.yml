@@ -1,53 +1,9 @@
-spring:
-  application:
-    name: sql-practice-question-service
-
-  #session失效时间(分钟)
-  session:
-    timeout: 4377600
-    store-type: redis
-  #redis
-  redis:
-    port: 6379
-    host: 47.116.196.137
-    database: 0
-    password: sqlpractice
-  jackson:
-    date-format: yyyy-MM-dd
-    timeZone: Asia/Shanghai
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: xg
-    password: Dbase2122!
-    url: jdbc:mysql://rm-uf6jlnk6v4r5jemjsio.mysql.rds.aliyuncs.com:3306/sql_practice?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-  cloud:
-    nacos:
-      discovery:
-        register-enabled: true
-        server-addr: 47.116.196.137:8848
-        # 改为自己的 nacos 命名空间
-        namespace: xws111
-
-rocketmq:
-  name-server: 117.72.10.224:9876
-  producer:
-    group: producer
-    send-message-timeout: 30000
 server:
-  port: 9103
   servlet:
     context-path: /api/question
     session:
       cookie:
         path: /api
-mybatis-plus:
-  global-config:
-    db-config:
-      logic-delete-field: flag
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 springdoc:
   api-docs:
     enabled: true
