@@ -23,6 +23,7 @@ variables:
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
+    - git config --global http.sslVerify false
     - git clone https://$CI_PROJECT_ACCESS_TOKEN@gitlab.code-nav.cn/xws111/sql-practice-end.git
 
 
