@@ -23,13 +23,7 @@ variables:
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
   script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -p 443 -H gitlab.code-nav.cn >> ~/.ssh/known_hosts
-    - git clone ssh://git@gitlab.code-nav.cn:443/xws111/sql-practice-end.git
-    - cd sql-practice-end
-    - echo '666' # 例如：make
+    - git clone https://$CI_PROJECT_ACCESS_TOKEN@gitlab.code-nav.cn/xws111/sql-practice-end.git
 
 
 deploy-job:      # This job runs in the deploy stage.
