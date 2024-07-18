@@ -17,4 +17,3 @@ deploy-job:      # This job runs in the deploy stage.
     - echo "Deploying application..."
     - sudo /root/script/deploy.sh
     - echo "Application successfully deployed."
-    
