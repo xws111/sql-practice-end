@@ -2,6 +2,7 @@ package com.xws111.sqlpractice.user.controller;
 
 
 import com.alibaba.nacos.common.utils.StringUtils;
+import com.xws111.sqlpractice.annotation.AuthCheck;
 import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
@@ -11,6 +12,7 @@ import com.xws111.sqlpractice.model.dto.user.UserLoginRequest;
 import com.xws111.sqlpractice.model.dto.user.UserRegisterRequest;
 import com.xws111.sqlpractice.model.dto.user.UserUpdateMyRequest;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 @RestController
@@ -122,9 +125,14 @@ public class UserController {
         if (loginUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
         }
+        //如果非管理员或者自己的信息，不能修改
+        if (!Objects.equals(loginUser.getId(), userUpdateMyRequest.getId()) && !Objects.equals(loginUser.getRole(), UserRoleEnum.ADMIN.getRole())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
+        }
+
         User user = new User();
         BeanUtils.copyProperties(userUpdateMyRequest, user);
-        user.setId(loginUser.getId());
+        user.setId(userUpdateMyRequest.getId());
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);

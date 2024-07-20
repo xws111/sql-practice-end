@@ -14,6 +14,10 @@ import java.io.Serializable;
 public class UserUpdateMyRequest implements Serializable {
 
     /**
+     * 用户id
+     */
+    private Long id;
+    /**
      * 用户昵称
      */
     private String username;
@@ -22,6 +26,10 @@ public class UserUpdateMyRequest implements Serializable {
      * 用户头像
      */
     private String avatarUrl;
+    /**
+     * 用户密码
+     */
+    private String userPassword;
 
 
     private static final long serialVersionUID = 1L;
