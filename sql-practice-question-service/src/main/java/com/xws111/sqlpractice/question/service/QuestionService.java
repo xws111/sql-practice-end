@@ -10,6 +10,7 @@ import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
 * @author xg
@@ -53,4 +54,6 @@ public interface QuestionService extends IService<Question> {
     Page<QuestionListVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
 
     PageInfo<QuestionListVO> getQuestionListPage(QuestionListRequest pageRequest);
+
+    List<Integer> getQuestionAcList(Long userId);
 }
