@@ -3,13 +3,17 @@ package com.xws111.sqlpractice.question.controller.inner;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
+import com.xws111.sqlpractice.model.entity.Question;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.vo.JudgeInfo;
+import com.xws111.sqlpractice.question.service.QuestionService;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/inner")
@@ -18,6 +22,9 @@ public class QuestionInnerController implements QuestionFeignClient {
     private QuestionSubmitService questionSubmitService;
     @Resource
     private QuestionMapper questionMapper;
+
+    @Resource
+    private QuestionService questionService;
 
     /**
      * 根据id获取提交记录
@@ -67,6 +74,17 @@ public class QuestionInnerController implements QuestionFeignClient {
     @Override
     public void incrementAccepted(Long id) {
         questionMapper.incrementAcceptedCount(id);
+    }
+
+
+    /**
+     * 根据ids拿到对应的题目数据
+     * @param idList
+     * @return
+     */
+    @GetMapping("/get/ids")
+    public List<Question> listByIds(@RequestParam("idList") Collection<Long> idList){
+        return questionService.listByIds(idList);
     }
 
 }
