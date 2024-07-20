@@ -141,6 +141,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         return pageInfo;
     }
 
+    @Override
+    public List<Integer> getQuestionAcList(Long userId) {
+        List<Integer> acList = questionMapper.getQuestionAcList(userId);
+        return acList;
+    }
+
 }
 
 

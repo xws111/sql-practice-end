@@ -11,6 +11,9 @@ import lombok.Data;
 @Data
 public class QuestionListVO {
     private Integer id;
+    // 做题状态
+    private boolean status;
+
     private String title;
     private Integer favorNum;
     private Long submitNum;

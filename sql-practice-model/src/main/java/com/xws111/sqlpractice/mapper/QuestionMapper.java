@@ -57,6 +57,7 @@ public interface QuestionMapper extends BaseMapper<Question> {
     @Update("UPDATE question SET accepted = question.accepted + 1 WHERE id = #{questionId}")
     void incrementAcceptedCount(@Param("questionId") Long questionId);
 
+    List<Integer> getQuestionAcList(Long userId);
 }
 
 
