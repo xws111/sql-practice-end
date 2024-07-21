@@ -41,6 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private static final String SALT = "xws111";
 
     private static final String USER_LOGIN_STATE = "USER_LOGIN_STATE";
+
     @Override
     public LoginUserVO userRegister(String account, String password, String checkPassword, HttpServletRequest request) {
         // 1. 校验
@@ -231,6 +232,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public boolean updateUserPasswordById(String checkPassword, User user) {
+        String password = user.getPassword();
+        if (StringUtils.isAnyBlank(password, checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
+        }
+        if (password.length() < 6 || checkPassword.length() < 6) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+        }
+        // 密码和校验密码相同
+        if (!password.equals(checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
+        }
+        user.setPassword(DigestUtils.md5DigestAsHex((SALT + password).getBytes()));
+        return this.updateById(user);
     }
 
 }

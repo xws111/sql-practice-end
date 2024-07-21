@@ -6,11 +6,6 @@ server:
 
 # Spring
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-uf6jlnk6v4r5jemjsio.mysql.rds.aliyuncs.com:3306/sql_practice
-    username: xg
-    password: Dbase2122!
   application:
     # 应用名称
     name: sql-practice-user-service

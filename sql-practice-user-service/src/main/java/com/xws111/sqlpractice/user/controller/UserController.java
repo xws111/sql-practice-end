@@ -2,7 +2,6 @@ package com.xws111.sqlpractice.user.controller;
 
 
 import com.alibaba.nacos.common.utils.StringUtils;
-import com.xws111.sqlpractice.annotation.AuthCheck;
 import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
@@ -11,6 +10,7 @@ import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.model.dto.user.UserLoginRequest;
 import com.xws111.sqlpractice.model.dto.user.UserRegisterRequest;
 import com.xws111.sqlpractice.model.dto.user.UserUpdateMyRequest;
+import com.xws111.sqlpractice.model.dto.user.UserUpdateRequest;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
@@ -107,6 +107,7 @@ public class UserController {
         return ResultUtils.success(userService.getLoginUserVO(user));
     }
 
+
     /**
      * 更新个人信息（用户）
      *
@@ -115,7 +116,7 @@ public class UserController {
      * @return 成功与否
      */
     @ApiOperation(value = "用户更新用户信息接口", notes = "用户更新用户信息接口")
-    @PostMapping("/update")
+    @PostMapping("/update/user")
     public BaseResponse<Boolean> updateByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
@@ -125,16 +126,100 @@ public class UserController {
         if (loginUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
         }
-        //如果非管理员或者自己的信息，不能修改
-        if (!Objects.equals(loginUser.getId(), userUpdateMyRequest.getId()) && !Objects.equals(loginUser.getRole(), UserRoleEnum.ADMIN.getRole())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
-        }
-
         User user = new User();
         BeanUtils.copyProperties(userUpdateMyRequest, user);
-        user.setId(userUpdateMyRequest.getId());
+        user.setId(loginUser.getId());
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+    /**
+     * 更新个人密码（用户）
+     *
+     * @param userUpdateMyRequest 请求体
+     * @param request             request
+     * @return 成功与否
+     */
+    @ApiOperation(value = "用户更新个人密码接口", notes = "用户更新个人密码接口")
+    @PostMapping("/update/user/password")
+    public BaseResponse<Boolean> updatePasswordByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
+                                                      HttpServletRequest request) {
+        if (userUpdateMyRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateMyRequest, user);
+        user.setId(loginUser.getId());
+        boolean result = userService.updateUserPasswordById(userUpdateMyRequest.getCheckPassword(), user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+
+    /**
+     * 更新用户密码（管理员）
+     *
+     * @param userUpdateRequest 请求体
+     * @param request           request
+     * @return 成功与否
+     */
+    @ApiOperation(value = "管理员更新用户密码接口", notes = "管理员更新用户密码接口")
+    @PostMapping("/update/admin/password")
+    public BaseResponse<Boolean> updateByAdmin(@RequestBody UserUpdateRequest userUpdateRequest,
+                                               HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+        }
+        //如果非管理员或者自己的信息，不能修改
+        if (!Objects.equals(loginUser.getId(), userUpdateRequest.getId()) && !loginUser.getRole().equals(UserRoleEnum.ADMIN.getRole())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateRequest, user);
+        user.setId(userUpdateRequest.getId());
+        boolean result = userService.updateUserPasswordById(userUpdateRequest.getCheckPassword(), user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+
+    /**
+     * 更新用户信息（管理员）
+     *
+     * @param userUpdateRequest 请求体
+     * @param request           request
+     * @return 成功与否
+     */
+    @ApiOperation(value = "管理员更新用户信息接口", notes = "管理员更新用户信息接口")
+    @PostMapping("/update/admin")
+    public BaseResponse<Boolean> updatePasswordByAdmin(@RequestBody UserUpdateRequest userUpdateRequest,
+                                                       HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+        }
+        //如果非管理员或者自己的信息，不能修改
+        if (!Objects.equals(loginUser.getId(), userUpdateRequest.getId()) && !loginUser.getRole().equals(UserRoleEnum.ADMIN.getRole())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateRequest, user);
+        user.setId(userUpdateRequest.getId());
+        boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
 }
