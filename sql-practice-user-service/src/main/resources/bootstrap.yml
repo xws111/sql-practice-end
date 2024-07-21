@@ -2,8 +2,6 @@
 server:
   port: 9101
 
-
-
 # Spring
 spring:
   application:
@@ -20,7 +18,6 @@ spring:
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         namespace: ${NACOS_NAMESPACE:}
-
 
       config:
         # 配置中心地址
