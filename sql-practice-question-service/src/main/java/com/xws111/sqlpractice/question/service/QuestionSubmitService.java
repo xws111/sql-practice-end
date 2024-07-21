@@ -40,5 +40,11 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
 
     QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
 
-    List<QuestionSubmitVO> getQuestionVOPage(List<QuestionSubmit> questionSubmitPage, HttpServletRequest request);
+    /**
+     * 将所有的QuestionSubmit对象转为QuestionSubmitVO
+     * @param questionSubmitPage
+     * @param request
+     * @return
+     */
+    List<QuestionSubmitVO> getQuestionSubmitVOList (List<QuestionSubmit> questionSubmitPage, HttpServletRequest request);
 }

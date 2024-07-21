@@ -114,6 +114,7 @@ public class QuestionSubmitController {
 
     /**
      * 记录谁提交了什么题目，分页返回对应的信息
+     *
      * @param request
      * @param questionSubmitQueryRequest
      * @return
@@ -126,7 +127,7 @@ public class QuestionSubmitController {
         QueryWrapper<QuestionSubmit> queryWrapper = questionSubmitService.getQueryWrapper(questionSubmitQueryRequest);
         PageHelper.startPage(questionSubmitQueryRequest.getCurrent(), questionSubmitQueryRequest.getPageSize());
         List<QuestionSubmit> questionSubmits = questionSubmitMapper.selectList(queryWrapper);
-        PageInfo pageInfo = new PageInfo(questionSubmits);
+        PageInfo pageInfo = new PageInfo(questionSubmitService.getQuestionSubmitVOList(questionSubmits, request));
         return ResultUtils.success(pageInfo);
     }
 

@@ -120,8 +120,14 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         return queryWrapper;
     }
 
+    /**
+     * 将所有的QuestionSubmit对象转为QuestionSubmitVO
+     * @param questionSubmitList
+     * @param request
+     * @return
+     */
     @Override
-    public List<QuestionSubmitVO> getQuestionVOPage(List<QuestionSubmit> questionSubmitList, HttpServletRequest request) {
+    public List<QuestionSubmitVO> getQuestionSubmitVOList(List<QuestionSubmit> questionSubmitList, HttpServletRequest request) {
 
         if (CollUtil.isEmpty(questionSubmitList)) {
             return new ArrayList<>();
