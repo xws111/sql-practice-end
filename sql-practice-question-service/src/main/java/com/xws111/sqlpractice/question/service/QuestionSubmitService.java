@@ -1,10 +1,14 @@
 package com.xws111.sqlpractice.question.service;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
+import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -34,4 +38,13 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
     List<QuestionSubmit> getQuestionSubmissionByQuestionId(HttpServletRequest request, Long questionId);
 
 
+    QueryWrapper<QuestionSubmit> getQueryWrapper(QuestionSubmitQueryRequest questionSubmitQueryRequest);
+
+    /**
+     * 将所有的QuestionSubmit对象转为QuestionSubmitVO
+     * @param questionSubmitPage
+     * @param request
+     * @return
+     */
+    List<QuestionSubmitVO> getQuestionSubmitVOList (List<QuestionSubmit> questionSubmitPage, HttpServletRequest request);
 }
