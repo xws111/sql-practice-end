@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 题目提交
+ * 题目收藏
  * @TableName question_collection
  */
 @TableName(value ="question_collection")
@@ -20,12 +20,12 @@ public class QuestionCollection implements Serializable {
     private Long id;
 
     /**
-     * 题目 id
+     * 收藏题目 id
      */
     private Long questionId;
 
     /**
-     * 创建用户 id
+     * 用户 id
      */
     private Long userId;
 
