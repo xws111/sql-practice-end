@@ -112,10 +112,10 @@
     </select>
 
 
-    <select id="getQuestionAcList" resultType="java.lang.Integer">
+    <select id="getQuestionACList" resultType="java.lang.Integer">
         SELECT DISTINCT question_id
         FROM question_submit
-        WHERE user_id = #{userId} AND result = '答案正确，恭喜你更进一步！'
+        WHERE user_id = #{userId} AND status = 2
     </select>
 
 
