@@ -4,17 +4,16 @@ import com.xws111.sqlpractice.common.BaseResponse;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.common.ResultUtils;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.question.service.QuestionCollectionService;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户收藏题目相关类
@@ -47,7 +46,12 @@ public class QuestionCollectionController {
         return ResultUtils.success(res);
     }
 
-
+    /**
+     * 用户取消收藏题目接口
+     * @param questionId
+     * @param request
+     * @return
+     */
     @ApiOperation(value = "用户取消收藏题目接口",notes = "用户取消收藏题目接口")
     @PostMapping("/cancel")
     public BaseResponse<Boolean> questionCancelCollect(@RequestParam Long questionId, HttpServletRequest request){
@@ -55,4 +59,18 @@ public class QuestionCollectionController {
         boolean res = questionCollectionService.cancelQuestionCollection(questionId, loginUser);
         return ResultUtils.success(res);
     }
+
+    /**
+     * 用户查看收藏题目接口
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "用户查看收藏题目接口",notes = "用户查看收藏题目接口")
+    @GetMapping("/list")
+    public BaseResponse<List<QuestionListVO>> questionList(HttpServletRequest request){
+        final User loginUser = userFeignClient.getLoginUser(request);
+        List<QuestionListVO> questionCollectionList = questionCollectionService.getQuestionCollectionList(loginUser);
+        return ResultUtils.success(questionCollectionList);
+    }
 }
+

@@ -3,6 +3,9 @@ package com.xws111.sqlpractice.question.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xws111.sqlpractice.model.entity.QuestionCollection;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.vo.QuestionListVO;
+
+import java.util.List;
 
 /**
  * @author wind
@@ -26,4 +29,11 @@ public interface QuestionCollectionService extends IService<QuestionCollection> 
      * @return
      */
     boolean cancelQuestionCollection(Long questionId, User loginUser);
+
+    /**
+     * 获取用户收藏的题目列表
+     * @param loginUser
+     * @return
+     */
+    List<QuestionListVO> getQuestionCollectionList(User loginUser);
 }

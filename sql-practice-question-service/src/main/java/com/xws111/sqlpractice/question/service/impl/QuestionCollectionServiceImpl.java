@@ -7,8 +7,12 @@ import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.QuestionCollectionMapper;
 import com.xws111.sqlpractice.model.entity.QuestionCollection;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.question.service.QuestionCollectionService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author wind
@@ -18,6 +22,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionCollectionServiceImpl extends ServiceImpl<QuestionCollectionMapper, QuestionCollection>
     implements QuestionCollectionService{
+
+    @Resource
+    private QuestionCollectionMapper questionCollectionMapper;
 
     /**
      * 收藏题目
@@ -50,6 +57,18 @@ public class QuestionCollectionServiceImpl extends ServiceImpl<QuestionCollectio
         }
         Long userId = loginUser.getId();
         return this.remove(new QueryWrapper<QuestionCollection>().eq("question_id", questionId).eq("user_id", userId));
+    }
+
+    /**
+     * 获取用户收藏的题目列表
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public List<QuestionListVO> getQuestionCollectionList(User loginUser) {
+        Long userId = loginUser.getId();
+        List<QuestionListVO> questionCollectionList = questionCollectionMapper.getQuestionCollectionList(userId);
+        return questionCollectionList;
     }
 }
 
