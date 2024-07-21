@@ -142,8 +142,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public List<Integer> getQuestionAcList(Long userId) {
-        List<Integer> acList = questionMapper.getQuestionAcList(userId);
+    public List<Integer> getQuestionACList(Long userId) {
+        List<Integer> acList = questionMapper.getQuestionACList(userId);
         return acList;
     }
 

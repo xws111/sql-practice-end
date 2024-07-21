@@ -55,5 +55,5 @@ public interface QuestionService extends IService<Question> {
 
     PageInfo<QuestionListVO> getQuestionListPage(QuestionListRequest pageRequest);
 
-    List<Integer> getQuestionAcList(Long userId);
+    List<Integer> getQuestionACList(Long userId);
 }

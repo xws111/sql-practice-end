@@ -81,7 +81,7 @@ public class QuestionController {
             return ResultUtils.success(pages);
         }
         // 如果用户已经登录了，查询该用户的ac情况
-        List<Integer> acList = questionService.getQuestionAcList(currentUser.getId());
+        List<Integer> acList = questionService.getQuestionACList(currentUser.getId());
         // 遍历每页中的题目
         for(QuestionListVO page : pages.getList()) { // 确保你调用getList()来获取实际的列表
             if (acList.contains(page.getId())) {
