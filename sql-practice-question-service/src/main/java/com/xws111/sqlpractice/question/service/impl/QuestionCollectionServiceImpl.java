@@ -38,6 +38,12 @@ public class QuestionCollectionServiceImpl extends ServiceImpl<QuestionCollectio
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long userId = loginUser.getId();
+        // 查询是否已经收藏
+        QuestionCollection tempquestionCollection = this.getOne(new QueryWrapper<QuestionCollection>().eq("question_id", questionId).eq("user_id", userId));
+        if(tempquestionCollection != null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该题目已经收藏了");
+        }
+        // 保存收藏记录
         QuestionCollection questionCollection = new QuestionCollection();
         questionCollection.setQuestionId(questionId);
         questionCollection.setUserId(userId);
@@ -69,6 +75,17 @@ public class QuestionCollectionServiceImpl extends ServiceImpl<QuestionCollectio
         Long userId = loginUser.getId();
         List<QuestionListVO> questionCollectionList = questionCollectionMapper.getQuestionCollectionList(userId);
         return questionCollectionList;
+    }
+
+    /**
+     * 获取题目的收藏数
+     * @param questionId
+     * @return
+     */
+    @Override
+    public long getQuestionCollectionCount(Long questionId) {
+        long count = this.count(new QueryWrapper<QuestionCollection>().eq("question_id", questionId));
+        return count;
     }
 }
 

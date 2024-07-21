@@ -36,4 +36,11 @@ public interface QuestionCollectionService extends IService<QuestionCollection> 
      * @return
      */
     List<QuestionListVO> getQuestionCollectionList(User loginUser);
+
+    /**
+     * 获取题目的收藏数
+     * @param questionId
+     * @return
+     */
+    long getQuestionCollectionCount(Long questionId);
 }
