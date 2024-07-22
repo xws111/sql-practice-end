@@ -38,10 +38,18 @@ public class QuestionCollectionServiceImpl extends ServiceImpl<QuestionCollectio
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         Long userId = loginUser.getId();
-        // 查询是否已经收藏
-        QuestionCollection tempquestionCollection = this.getOne(new QueryWrapper<QuestionCollection>().eq("question_id", questionId).eq("user_id", userId));
+        // 查询用户是否曾经收藏过该题目
+        QuestionCollection tempquestionCollection = questionCollectionMapper.queryQuestionCollection(userId, questionId);
         if(tempquestionCollection != null){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该题目已经收藏了");
+            Integer isDeleted = tempquestionCollection.getIsDeleted();
+            if(isDeleted == 0){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "该题目已经收藏了");
+            }else{
+                // 恢复收藏记录
+                int res = questionCollectionMapper.reCollectQuestion(userId, questionId);
+                // 若 res > 0 返回收藏成功
+                return res > 0;
+            }
         }
         // 保存收藏记录
         QuestionCollection questionCollection = new QuestionCollection();
