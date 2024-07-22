@@ -122,6 +122,9 @@ public class UserController {
         if (userUpdateMyRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        if (!Objects.equals(userUpdateMyRequest.getPassword(), userUpdateMyRequest.getCheckPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入密码不一致");
+        }
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
@@ -130,63 +133,6 @@ public class UserController {
         BeanUtils.copyProperties(userUpdateMyRequest, user);
         user.setId(loginUser.getId());
         boolean result = userService.updateById(user);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(true);
-    }
-
-    /**
-     * 更新个人密码（用户）
-     *
-     * @param userUpdateMyRequest 请求体
-     * @param request             request
-     * @return 成功与否
-     */
-    @ApiOperation(value = "用户更新个人密码接口", notes = "用户更新个人密码接口")
-    @PostMapping("/update/user/password")
-    public BaseResponse<Boolean> updatePasswordByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
-                                                      HttpServletRequest request) {
-        if (userUpdateMyRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        User loginUser = userService.getLoginUser(request);
-        if (loginUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
-        }
-        User user = new User();
-        BeanUtils.copyProperties(userUpdateMyRequest, user);
-        user.setId(loginUser.getId());
-        boolean result = userService.updateUserPasswordById(userUpdateMyRequest.getCheckPassword(), user);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-        return ResultUtils.success(true);
-    }
-
-
-    /**
-     * 更新用户密码（管理员）
-     *
-     * @param userUpdateRequest 请求体
-     * @param request           request
-     * @return 成功与否
-     */
-    @ApiOperation(value = "管理员更新用户密码接口", notes = "管理员更新用户密码接口")
-    @PostMapping("/update/admin/password")
-    public BaseResponse<Boolean> updateByAdmin(@RequestBody UserUpdateRequest userUpdateRequest,
-                                               HttpServletRequest request) {
-        if (userUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        User loginUser = userService.getLoginUser(request);
-        if (loginUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
-        }
-        //如果非管理员或者自己的信息，不能修改
-        if (!Objects.equals(loginUser.getId(), userUpdateRequest.getId()) && !loginUser.getRole().equals(UserRoleEnum.ADMIN.getRole())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
-        }
-        User user = new User();
-        BeanUtils.copyProperties(userUpdateRequest, user);
-        user.setId(userUpdateRequest.getId());
-        boolean result = userService.updateUserPasswordById(userUpdateRequest.getCheckPassword(), user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
@@ -205,6 +151,9 @@ public class UserController {
                                                        HttpServletRequest request) {
         if (userUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (!Objects.equals(userUpdateRequest.getPassword(), userUpdateRequest.getCheckPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入密码不一致");
         }
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
