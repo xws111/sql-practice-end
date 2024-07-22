@@ -53,6 +53,8 @@
         ORDER BY q.id
     </select>
 
+
+
     <!-- 管理员获取问题列表 -->
     <resultMap id="AdminQuestionList" type="com.xws111.sqlpractice.model.vo.AdminQuestionVO">
         <id property="id" column="id" jdbcType="BIGINT"/>
@@ -107,6 +109,13 @@
         GROUP BY
         q.id
         ORDER BY q.id
+    </select>
+
+
+    <select id="getQuestionACList" resultType="java.lang.Integer">
+        SELECT DISTINCT question_id
+        FROM question_submit
+        WHERE user_id = #{userId} AND status = 2
     </select>
 
 
