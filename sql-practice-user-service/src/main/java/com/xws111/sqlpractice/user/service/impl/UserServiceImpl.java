@@ -173,9 +173,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             return null;
         }
         User safetyUser = new User();
-        safetyUser.setUsername(user.getUsername());
-        safetyUser.setAccount(user.getAccount());
-//        safetyUser.setPassword(user.getPassword());
+        BeanUtils.copyProperties(user, safetyUser);
+        user.setPassword(null);
         return safetyUser;
     }
 
