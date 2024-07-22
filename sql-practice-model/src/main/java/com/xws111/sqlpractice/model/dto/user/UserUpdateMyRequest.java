@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 public class UserUpdateMyRequest implements Serializable {
 
+
     /**
      * 用户昵称
      */
@@ -22,7 +23,14 @@ public class UserUpdateMyRequest implements Serializable {
      * 用户头像
      */
     private String avatarUrl;
-
+    /**
+     * 用户密码
+     */
+    private String password;
+    /**
+     * 用户确认密码
+     */
+    private String checkPassword;
 
     private static final long serialVersionUID = 1L;
 }

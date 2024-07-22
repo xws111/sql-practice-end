@@ -120,4 +120,7 @@ public interface UserService extends IService<User> {
      * @return
      */
     Wrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    boolean updateUserPasswordById(String checkPassword,User user);
+
 }

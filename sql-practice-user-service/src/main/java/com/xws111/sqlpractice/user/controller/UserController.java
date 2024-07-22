@@ -10,7 +10,9 @@ import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.model.dto.user.UserLoginRequest;
 import com.xws111.sqlpractice.model.dto.user.UserRegisterRequest;
 import com.xws111.sqlpractice.model.dto.user.UserUpdateMyRequest;
+import com.xws111.sqlpractice.model.dto.user.UserUpdateRequest;
 import com.xws111.sqlpractice.model.entity.User;
+import com.xws111.sqlpractice.model.enums.UserRoleEnum;
 import com.xws111.sqlpractice.model.vo.LoginUserVO;
 import com.xws111.sqlpractice.user.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 
 @RestController
@@ -104,6 +107,7 @@ public class UserController {
         return ResultUtils.success(userService.getLoginUserVO(user));
     }
 
+
     /**
      * 更新个人信息（用户）
      *
@@ -112,11 +116,14 @@ public class UserController {
      * @return 成功与否
      */
     @ApiOperation(value = "用户更新用户信息接口", notes = "用户更新用户信息接口")
-    @PostMapping("/update")
+    @PostMapping("/update/user")
     public BaseResponse<Boolean> updateByUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
                                               HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (!Objects.equals(userUpdateMyRequest.getPassword(), userUpdateMyRequest.getCheckPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入密码不一致");
         }
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {
@@ -129,4 +136,39 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
+
+
+    /**
+     * 更新用户信息（管理员）
+     *
+     * @param userUpdateRequest 请求体
+     * @param request           request
+     * @return 成功与否
+     */
+    @ApiOperation(value = "管理员更新用户信息接口", notes = "管理员更新用户信息接口")
+    @PostMapping("/update/admin")
+    public BaseResponse<Boolean> updatePasswordByAdmin(@RequestBody UserUpdateRequest userUpdateRequest,
+                                                       HttpServletRequest request) {
+        if (userUpdateRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (!Objects.equals(userUpdateRequest.getPassword(), userUpdateRequest.getCheckPassword())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入密码不一致");
+        }
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+        }
+        //如果非管理员或者自己的信息，不能修改
+        if (!Objects.equals(loginUser.getId(), userUpdateRequest.getId()) && !loginUser.getRole().equals(UserRoleEnum.ADMIN.getRole())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无修改权限");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userUpdateRequest, user);
+        user.setId(userUpdateRequest.getId());
+        boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
 }
