@@ -1,0 +1,19 @@
+server:
+  servlet:
+    context-path: /api/user
+    session:
+      cookie:
+        path: /api
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: flag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+knife4j:
+  enable: true
+
+
+

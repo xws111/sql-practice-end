@@ -1,0 +1,13 @@
+server:
+  servlet:
+    context-path: /api/question
+    session:
+      cookie:
+        path: /api
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    persist-authorization: true
+knife4j:
+  enable: true
