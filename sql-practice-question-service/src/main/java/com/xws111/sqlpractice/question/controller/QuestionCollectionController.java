@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户收藏题目相关类
@@ -30,13 +31,14 @@ public class QuestionCollectionController {
 
     /**
      * 用户收藏题目接口
-     * @param questionId
+     * @param question
      * @param request
      * @return
      */
     @ApiOperation(value = "用户收藏题目接口",notes = "用户收藏题目接口")
     @PostMapping("/add")
-    public BaseResponse<Boolean> questionCollect(@RequestParam Long questionId, HttpServletRequest request){
+    public BaseResponse<Boolean> questionCollect(@RequestBody Map<String, Long> question, HttpServletRequest request){
+        Long questionId = question.get("questionId");
         // 登录后才能收藏
         final User loginUser = userFeignClient.getLoginUser(request);
         if(loginUser == null){
@@ -48,14 +50,15 @@ public class QuestionCollectionController {
 
     /**
      * 用户取消收藏题目接口
-     * @param questionId
+     * @param question
      * @param request
      * @return
      */
     @ApiOperation(value = "用户取消收藏题目接口",notes = "用户取消收藏题目接口")
     @PostMapping("/cancel")
-    public BaseResponse<Boolean> questionCancelCollect(@RequestParam Long questionId, HttpServletRequest request){
+    public BaseResponse<Boolean> questionCancelCollect(@RequestBody Map<String, Long> question, HttpServletRequest request){
         final User loginUser = userFeignClient.getLoginUser(request);
+        Long questionId = question.get("questionId");
         boolean res = questionCollectionService.cancelQuestionCollection(questionId, loginUser);
         return ResultUtils.success(res);
     }
