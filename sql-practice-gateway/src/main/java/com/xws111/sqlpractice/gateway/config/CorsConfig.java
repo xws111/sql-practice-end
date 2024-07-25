@@ -24,7 +24,7 @@ public class CorsConfig {
         config.addAllowedMethod("*");
         config.setAllowCredentials(true);
         // todo 实际改为线上真实域名、本地域名
-        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:8000", "http://localhost:8100", "http://www.sekou.icu", "http://www.sekou.icu:8100", "https://www.sekou.icu", "https://www.sekou.icu:8100"));
+        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:8000", "http://localhost:8100", "http://www.sekou.icu", "http://www.sekou.icu:8100", "https://www.sekou.icu", "https://www.sekou.icu:8100", "http://sekou.icu", "http://sekou.icu:8100", "https://sekou.icu", "https://sekou.icu:8100"));
         config.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
         source.registerCorsConfiguration("/**", config);
