@@ -1,12 +1,6 @@
 # Tomcat
 server:
   port: 9111
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: 2122
-    key-store-type: PKCS12
-    key-alias: tomcat
-
 # Spring
 spring:
   application:
