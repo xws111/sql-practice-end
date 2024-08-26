@@ -84,11 +84,40 @@ public class QuestionController {
         List<Integer> acList = questionService.getQuestionACList(currentUser.getId());
         // 遍历每页中的题目
         for(QuestionListVO page : pages.getList()) { // 确保你调用getList()来获取实际的列表
-            if (acList.contains(page.getId())) {
-                page.setStatus(true); // 设置题目为已通过
-            } else {
-                page.setStatus(false); // 设置题目为未通过
-            }
+            // 设置题目为通过状态
+            page.setStatus(acList.contains(page.getId()));
+        }
+        return ResultUtils.success(pages);
+    }
+
+    /**
+     * 分页获取特定用户题目列表 by xws111
+     * 2024/8/20
+     *
+     * @param questionListRequest 特定用户题目列表查询包装类
+     * @return 分页特定用户题目列表包装类
+     */
+    @ApiOperation(value = "根据标签筛选获取题目列表", notes = "根据标签筛选获取题目列表")
+    @GetMapping("/list/page/tag")
+    public BaseResponse<PageInfo<QuestionListVO>> userListQuestionPageByTags(@ModelAttribute QuestionListRequest questionListRequest, HttpServletRequest request) {
+
+        int size = questionListRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User currentUser = (User) userObj;
+        PageInfo<QuestionListVO> pages = questionService.getQuestionListPage(questionListRequest);
+        // 如果用户没登陆，报错
+        if(null == currentUser) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        // 如果用户已经登录了，查询该用户的ac情况
+        List<Integer> acList = questionService.getQuestionACList(currentUser.getId());
+        // 遍历每页中的题目
+        for(QuestionListVO page : pages.getList()) { // 确保你调用getList()来获取实际的列表
+            // 设置题目为通过状态
+            page.setStatus(acList.contains(page.getId()));
         }
         return ResultUtils.success(pages);
     }

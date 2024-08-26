@@ -40,6 +40,10 @@
         q.id, q.title, q.content, q.answer, q.time_limit, q.favor_num, q.submit_num, q.accepted, q.create_time, q.update_time, q.is_deleted, q.difficulty
         FROM
         question q
+        LEFT JOIN
+        question_tag qt ON q.id = qt.question_id
+        LEFT JOIN
+        tag t ON t.id = qt.tag_id
         <where>
             <if test="keyword != null and keyword != ''">
                 q.title LIKE CONCAT('%', #{keyword}, '%')
@@ -48,6 +52,13 @@
                 AND q.id = #{id}
             </if>
             AND q.is_deleted = 0
+            <if test="tags != null and tags.size() > 0">
+                AND (
+                <foreach collection="tags" item="tag" separator=" OR ">
+                    t.name = #{tag}
+                </foreach>
+                )
+            </if>
         </where>
         GROUP BY q.id
         ORDER BY q.id

@@ -22,11 +22,12 @@ public interface QuestionMapper extends BaseMapper<Question> {
      *
      * @param id
      * @param keyword
-
+     * @param tags
      * @return
      */
     List<QuestionListVO> getQuestionsVOList(@Param("id") Long id,
-                                            @Param("keyword") String keyword);
+                                            @Param("keyword") String keyword,
+                                            @Param("tags") List<String> tags);
 
 
     /**
