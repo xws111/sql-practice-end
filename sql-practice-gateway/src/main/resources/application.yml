@@ -17,6 +17,14 @@ spring:
           uri: lb://sql-practice-judge-service
           predicates:
             - Path=/api/judge/**
+        - id: sql-practice-study-service
+          uri: lb://sql-practice-study-service
+          predicates:
+            - Path=/api/study/**
+        - id: sql-practice-article-service
+          uri: lb://sql-practice-article-service
+          predicates:
+            - Path=/api/article/**
   main:
     web-application-type: reactive
 server:

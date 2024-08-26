@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xws111.sqlpractice.mapper.ArticleMapper">
+    <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.Article">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="description" property="description" />
+        <result column="content" property="content" />
+        <result column="author_id" property="authorId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="cover" property="cover" />
+        <result column="likes" property="likes" />
+    </resultMap>
+    <!-- 分页查找全部文章 -->
+    <select id="selectArticlesByPage" resultType="com.xws111.sqlpractice.model.vo.ArticleListVO">
+        SELECT
+            a.*,
+            u.username AS author_name
+        FROM
+            article a
+        LEFT JOIN
+            user u ON a.author_id = u.id
+        ORDER BY
+            a.create_time DESC
+    </select>
+
+    <!-- 查找文章分类标签 -->
+    <select id="selectCategoryNamesByArticleId" resultType="java.lang.String">
+        SELECT c.name
+        FROM article_category ac
+                 JOIN category c ON ac.category_id = c.id
+        WHERE ac.article_id = #{articleId}
+    </select>
+    <!-- 根据分类查找文章 -->
+    <select id="selectArticlesByCategories" resultType="com.xws111.sqlpractice.model.vo.ArticleListVO">
+        SELECT
+        a.*,
+        u.username AS author_name
+        FROM
+        article a
+        LEFT JOIN
+        article_category ac ON a.id = ac.article_id
+        LEFT JOIN
+        category c ON ac.category_id = c.id
+        LEFT JOIN
+        user u ON a.author_id = u.id
+        WHERE
+        c.name = #{category}
+    </select>
+</mapper>

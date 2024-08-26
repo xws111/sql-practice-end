@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xws111.sqlpractice.mapper.BookMapper">
+    <resultMap id="BaseResultMap" type="com.xws111.sqlpractice.model.entity.Book">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="author" property="author" />
+        <result column="description" property="description" />
+        <result column="price" property="price" />
+        <result column="cover" property="cover" />
+        <result column="pages" property="pages" />
+        <result column="category_id" property="categoryId" />
+        <result column="keyword" property="keyword" />
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM book;
+    </select>
+    <select id="getBooksByCategory" resultMap="BaseResultMap">
+        SELECT b.* FROM book b
+        JOIN sql_practice.category c on c.id = b.category_id
+        WHERE c.name = #{category}
+    </select>
+    <select id="getBookKeyWord" resultType="java.lang.String">
+        SELECT keyword FROM book b
+        WHERE b.id = #{bookId}
+    </select>
+</mapper>

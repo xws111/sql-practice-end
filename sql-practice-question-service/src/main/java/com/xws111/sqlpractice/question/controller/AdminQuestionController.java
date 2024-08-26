@@ -21,6 +21,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+
+/**
+ * 管理问题的类
+ */
+
 @RestController
 @RequestMapping("/admin/question")
 @Slf4j

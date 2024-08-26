@@ -9,6 +9,7 @@ import com.xws111.sqlpractice.model.vo.JudgeInfo;
 import com.xws111.sqlpractice.question.service.QuestionService;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -54,6 +55,7 @@ public class QuestionInnerController implements QuestionFeignClient {
      * @param judgeInfo
      */
     @Override
+    @Transactional
     public void updateSubmitResult(JudgeInfo judgeInfo) {
         if (judgeInfo == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

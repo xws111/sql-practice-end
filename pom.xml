@@ -16,6 +16,8 @@
         <module>sql-practice-service-client</module>
         <module>sql-practice-user-service</module>
         <module>sql-practice-judge-service</module>
+        <module>sql-practice-study-service</module>
+        <module>sql-practice-article-service</module>
     </modules>
     <properties>
         <java.version>8</java.version>

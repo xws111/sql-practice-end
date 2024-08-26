@@ -20,10 +20,6 @@ public class QuestionListRequest extends PageRequest implements Serializable {
      */
     private Long id;
 
-//    /**
-//     * userId
-//     */
-//    private Long userId;
     /**
      * 标题
      */

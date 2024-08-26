@@ -45,10 +45,8 @@ public class JudgeServiceImpl implements JudgeService {
         judgeInfo.setStatus(1);
         judgeInfo.setId(id);
         questionFeignClient.updateSubmitResult(judgeInfo);
-
-        QuestionSubmit questionSubmit = new QuestionSubmit();
         // 1. 通过题目 id 拿到提交信息
-        questionSubmit = questionFeignClient.getQuestionSubmitById(id);
+        QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(id);
         // 2. 将题目代码放入远程沙箱跑
         String code = questionSubmit.getCode();
         ExecuteResult executeResult = postToRemoteApi(code);
@@ -75,6 +73,8 @@ public class JudgeServiceImpl implements JudgeService {
             log.info("答案正确！");
             judgeInfo.setStatus(2);
             judgeInfo.setResult("答案正确，恭喜你更进一步！");
+            // 数据库通过数 + 1
+            questionFeignClient.incrementAccepted(questionSubmit.getQuestionId());
         } else {
             log.info("答案错误！");
             judgeInfo.setStatus(3);

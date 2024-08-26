@@ -20,22 +20,6 @@ import java.util.List;
 public interface QuestionService extends IService<Question> {
 
     /**
-     * 校验
-     *
-     * @param question
-     * @param add
-     */
-    void validQuestion(Question question, boolean add);
-
-    /**
-     * 获取查询条件
-     *
-     * @param questionListRequest
-     * @return
-     */
-    QueryWrapper<Question> getQueryWrapper(QuestionListRequest questionListRequest);
-
-    /**
      * 获取题目封装
      *
      * @param id
@@ -56,4 +40,5 @@ public interface QuestionService extends IService<Question> {
     PageInfo<QuestionListVO> getQuestionListPage(QuestionListRequest pageRequest);
 
     List<Integer> getQuestionACList(Long userId);
+
 }

@@ -2,13 +2,13 @@ package com.xws111.sqlpractice.question.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xws111.sqlpractice.common.ErrorCode;
 import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.QuestionSubmitMapper;
+import com.xws111.sqlpractice.mapper.UserMapper;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitAddRequest;
 import com.xws111.sqlpractice.model.dto.questionsubmit.QuestionSubmitQueryRequest;
 import com.xws111.sqlpractice.model.entity.Question;
@@ -16,6 +16,7 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.enums.QuestionSubmitStatusEnum;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
+import com.xws111.sqlpractice.model.vo.RankListVO;
 import com.xws111.sqlpractice.question.rocketmq.MQProducer;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
@@ -56,6 +57,8 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Qualifier("com.xws111.sqlpractice.service.QuestionFeignClient")
     @Autowired
     private QuestionFeignClient questionFeignClient;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public long doQuestionSubmit(QuestionSubmitAddRequest questionSubmitAddRequest, User loginUser) {
@@ -158,6 +161,23 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         return questionSubmitVOList;
     }
 
+    @Override
+    public List<RankListVO> getOverallRankList(HttpServletRequest request) {
+        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
+        if (loginUser.getId() <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return userMapper.getTopUsersWithPassedCount();
+    }
+
+    @Override
+    public List<RankListVO> getQuestionRankList(HttpServletRequest request, Integer id) {
+        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
+        if (loginUser.getId() <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return userMapper.getUsersWithMinDuration(id, 10);
+    }
 }
 
 

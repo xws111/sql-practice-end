@@ -1,15 +1,12 @@
 package com.xws111.sqlpractice.question.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.common.ErrorCode;
-import com.xws111.sqlpractice.constant.CommonConstant;
 import com.xws111.sqlpractice.exception.BusinessException;
-import com.xws111.sqlpractice.exception.ThrowUtils;
 import com.xws111.sqlpractice.mapper.QuestionMapper;
 import com.xws111.sqlpractice.mapper.TagMapper;
 import com.xws111.sqlpractice.model.dto.question.QuestionListRequest;
@@ -19,12 +16,10 @@ import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.model.vo.QuestionVO;
 import com.xws111.sqlpractice.question.service.QuestionService;
 import com.xws111.sqlpractice.service.UserFeignClient;
-import com.xws111.sqlpractice.utils.SqlUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -47,64 +42,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Resource
     private QuestionMapper questionMapper;
-
-
-    /**
-     * 校验题目是否合法
-     *
-     * @param question
-     * @param add
-     */
-    @Override
-    public void validQuestion(Question question, boolean add) {
-        if (question == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
-        String title = question.getTitle();
-        String description = question.getContent();
-        String answer = question.getAnswer();
-
-        // 创建时，参数不能为空
-        if (add) {
-            ThrowUtils.throwIf(StringUtils.isAnyBlank(title, description, answer), ErrorCode.PARAMS_ERROR);
-        }
-        // 有参数则校验
-        if (StringUtils.isNotBlank(title) && title.length() > 80) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "标题过长");
-        }
-        if (StringUtils.isNotBlank(description) && description.length() > 8192) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");
-        }
-        if (StringUtils.isNotBlank(answer) && answer.length() > 8192) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "答案过长");
-        }
-    }
-
-    /**
-     * 获取查询包装类（用户根据哪些字段查询，根据前端传来的请求对象，得到 mybatis 框架支持的查询 QueryWrapper 类）
-     *
-     * @param questionListRequest
-     * @return
-     */
-    @Override
-    public QueryWrapper<Question> getQueryWrapper(QuestionListRequest questionListRequest) {
-        QueryWrapper<Question> queryWrapper = new QueryWrapper<>();
-        if (questionListRequest == null) {
-            return queryWrapper;
-        }
-        Long id = questionListRequest.getId();
-        String title = questionListRequest.getTitle();
-        String sortField = questionListRequest.getSortField();
-        String sortOrder = questionListRequest.getSortOrder();
-
-        // 拼接查询条件
-        queryWrapper.like(StringUtils.isNotBlank(title), "title", title);
-        queryWrapper.eq("deleted", false);
-        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
-                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
-                sortField);
-        return queryWrapper;
-    }
 
     @Override
     public QuestionVO getQuestionVOById(Long id, HttpServletRequest request) {
@@ -132,11 +69,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         PageHelper.startPage(pageRequest.getCurrent(), pageRequest.getPageSize());
         Long id = pageRequest.getId();
         String keyword = pageRequest.getTitle();
+
         // todo 排序
         String sortField = pageRequest.getSortField();
         String sortOrder = pageRequest.getSortOrder();
         // 根据 id、标题分页获取题目信息
-        List<QuestionListVO> questionListVO = questionMapper.getQuestionsVOList(id, keyword);
+        List<QuestionListVO> questionListVO = questionMapper.getQuestionsVOList(id, keyword, pageRequest.getTags());
         PageInfo<QuestionListVO> pageInfo = new PageInfo<>(questionListVO);
         return pageInfo;
     }
