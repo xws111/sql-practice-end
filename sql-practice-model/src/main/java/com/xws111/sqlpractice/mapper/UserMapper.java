@@ -4,6 +4,7 @@ package com.xws111.sqlpractice.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.RankListVO;
+import com.xws111.sqlpractice.model.vo.RankVO;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -32,6 +33,17 @@ public interface UserMapper extends BaseMapper<User> {
             "ORDER BY duration ASC\n" +
             "LIMIT #{size};\n")
     List<RankListVO> getUsersWithMinDuration(@Param("questionId") int questionId, @Param("size") int size);
+
+    @Select("select accepted,\n" +
+            "       RANK() over (ORDER BY accepted desc , username asc) as user_rank\n" +
+            "from (select u.id, u.username, count(distinct question_id) as accepted\n" +
+            "      from user u\n" +
+            "               left join question_submit qs\n" +
+            "                         on u.id = qs.user_id\n" +
+            "      where status = 2\n" +
+            "      group by u.id) as r\n" +
+            "where r.id = #{id};")
+    RankVO getUserRankById(Long id);
 }
 
 

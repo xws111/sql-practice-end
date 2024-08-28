@@ -17,6 +17,7 @@ import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.enums.QuestionSubmitStatusEnum;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 import com.xws111.sqlpractice.model.vo.RankListVO;
+import com.xws111.sqlpractice.model.vo.RankVO;
 import com.xws111.sqlpractice.question.rocketmq.MQProducer;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
 import com.xws111.sqlpractice.service.QuestionFeignClient;
@@ -163,10 +164,6 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
     @Override
     public List<RankListVO> getOverallRankList(HttpServletRequest request) {
-        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
-        if (loginUser.getId() <= 0) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
-        }
         return userMapper.getTopUsersWithPassedCount();
     }
 
@@ -177,6 +174,15 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         return userMapper.getUsersWithMinDuration(id, 10);
+    }
+
+    @Override
+    public RankVO getQuestionRankByCurrentId(HttpServletRequest request) {
+        User loginUser = (User) request.getSession().getAttribute(UserFeignClient.USER_LOGIN_STATE);
+        if (loginUser.getId() <= 0) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+        }
+        return userMapper.getUserRankById(loginUser.getId());
     }
 }
 

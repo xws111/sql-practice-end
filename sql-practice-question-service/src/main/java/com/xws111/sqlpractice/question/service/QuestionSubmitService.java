@@ -9,6 +9,7 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 import com.xws111.sqlpractice.model.vo.RankListVO;
+import com.xws111.sqlpractice.model.vo.RankVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -51,4 +52,5 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
     List<RankListVO> getOverallRankList(HttpServletRequest request);
     List<RankListVO> getQuestionRankList(HttpServletRequest request, Integer id);
 
+    RankVO getQuestionRankByCurrentId(HttpServletRequest request);
 }
