@@ -1,8 +1,6 @@
 # Tomcat
 server:
   port: 9101
-
-
 # Spring
 spring:
   datasource:

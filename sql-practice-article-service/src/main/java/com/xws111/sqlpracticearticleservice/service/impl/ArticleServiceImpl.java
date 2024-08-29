@@ -4,6 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xws111.sqlpractice.mapper.ArticleMapper;
 import com.xws111.sqlpractice.model.vo.ArticleListVO;
+import com.xws111.sqlpractice.model.vo.ArticleRecommendListVO;
+import com.xws111.sqlpractice.model.vo.ArticleVO;
+import com.xws111.sqlpractice.model.vo.UserVO;
 import com.xws111.sqlpracticearticleservice.service.ArticleService;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +31,20 @@ public class ArticleServiceImpl implements ArticleService {
         PageHelper.startPage(pageNum, pageSize);
         List<ArticleListVO> articleListVOList = articleMapper.selectArticlesByCategories(category);
         return new PageInfo<>(articleListVOList);
+    }
+
+    @Override
+    public ArticleVO getArticleById(Integer id) {
+        return articleMapper.selectArticleById(id);
+    }
+
+    @Override
+    public List<ArticleRecommendListVO> getRecommendArticle() {
+        return articleMapper.getRecommendArticle();
+    }
+
+    @Override
+    public UserVO getAuthor(Integer id) {
+        return articleMapper.getAuthor(id);
     }
 }

@@ -50,4 +50,6 @@
         WHERE
         c.name = #{category}
     </select>
+    <!-- 获取文章详情 -->
+
 </mapper>
