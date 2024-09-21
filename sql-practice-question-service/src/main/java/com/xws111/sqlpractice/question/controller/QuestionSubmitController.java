@@ -16,6 +16,7 @@ import com.xws111.sqlpractice.model.entity.QuestionSubmit;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionSubmitVO;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
+import com.xws111.sqlpractice.security.annotation.LoginCheck;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,6 @@ public class QuestionSubmitController {
                                              @RequestBody @Valid QuestionSubmitAddRequest questionSubmitAddRequest) {
         // 登录才提交
         final User loginUser = userFeignClient.getLoginUser(request);
-
         long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(questionSubmitId);
     }
@@ -82,6 +82,7 @@ public class QuestionSubmitController {
     //TODO 不查询未成功的
     @ApiOperation(value = "用户查询结果接口", notes = "用户查询结果接口")
     @GetMapping("/{questionId}/result")
+    @LoginCheck
     public BaseResponse<QuestionSubmit> querySubmissionsByQuestionId(@PathVariable long questionId) {
         return ResultUtils.success(questionSubmitService.getById(questionId));
     }
@@ -97,6 +98,7 @@ public class QuestionSubmitController {
      */
     @ApiOperation(value = "获取当前用户的所有提交记录", notes = "querySubmissionsList")
     @GetMapping("/submissions/list")
+    @LoginCheck
     public BaseResponse<PageInfo<QuestionSubmit>> querySubmissionsList(HttpServletRequest request, @RequestParam(defaultValue = "1") Integer current, @RequestParam(defaultValue = "10") Integer size) {
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);

@@ -1,30 +1,74 @@
 spring:
+  redis:
+    host: 47.116.196.137
+    port: 6379
+    database: 0
+    password: sqlpractice
   cloud:
     gateway:
       discovery:
         locator:
-          enabled: true #开启注册中心路由功能
+          enabled: false #开启注册中心路由功能
       routes:
         - id: sql-practice-user-service
           uri: lb://sql-practice-user-service
           predicates:
             - Path=/api/user/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: '#{@ipKeyResolver}'
+
         - id: sql-practice-question-service
           uri: lb://sql-practice-question-service
           predicates:
             - Path=/api/question/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: '#{@ipKeyResolver}'
+
         - id: sql-practice-judge-service
           uri: lb://sql-practice-judge-service
           predicates:
             - Path=/api/judge/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: '#{@ipKeyResolver}'
+
         - id: sql-practice-study-service
           uri: lb://sql-practice-study-service
           predicates:
             - Path=/api/study/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: '#{@ipKeyResolver}'
+
         - id: sql-practice-article-service
           uri: lb://sql-practice-article-service
           predicates:
             - Path=/api/article/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: '#{@ipKeyResolver}'
   main:
     web-application-type: reactive
 server:

@@ -37,9 +37,9 @@
         </dependency>
         <dependency>
             <groupId>com.xws111</groupId>
-            <artifactId>sql-practice-service-client</artifactId>
+            <artifactId>sql-practice-security</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.xiaoymin</groupId>

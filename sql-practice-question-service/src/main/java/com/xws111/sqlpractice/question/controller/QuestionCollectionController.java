@@ -6,6 +6,7 @@ import com.xws111.sqlpractice.common.ResultUtils;
 import com.xws111.sqlpractice.model.entity.User;
 import com.xws111.sqlpractice.model.vo.QuestionListVO;
 import com.xws111.sqlpractice.question.service.QuestionCollectionService;
+import com.xws111.sqlpractice.security.annotation.LoginCheck;
 import com.xws111.sqlpractice.service.UserFeignClient;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +38,11 @@ public class QuestionCollectionController {
      */
     @ApiOperation(value = "用户收藏题目接口",notes = "用户收藏题目接口")
     @PostMapping("/add")
+    @LoginCheck
     public BaseResponse<Boolean> questionCollect(@RequestBody Map<String, Long> question, HttpServletRequest request){
         Long questionId = question.get("questionId");
         // 登录后才能收藏
         final User loginUser = userFeignClient.getLoginUser(request);
-        if(loginUser == null){
-            return ResultUtils.error(ErrorCode.NO_AUTH_ERROR,"用户未登录");
-        }
         boolean res = questionCollectionService.doQuestionCollection(questionId, loginUser);
         return ResultUtils.success(res);
     }
@@ -56,6 +55,7 @@ public class QuestionCollectionController {
      */
     @ApiOperation(value = "用户取消收藏题目接口",notes = "用户取消收藏题目接口")
     @PostMapping("/cancel")
+    @LoginCheck
     public BaseResponse<Boolean> questionCancelCollect(@RequestBody Map<String, Long> question, HttpServletRequest request){
         final User loginUser = userFeignClient.getLoginUser(request);
         Long questionId = question.get("questionId");
@@ -70,6 +70,7 @@ public class QuestionCollectionController {
      */
     @ApiOperation(value = "用户查看收藏题目接口",notes = "用户查看收藏题目接口")
     @GetMapping("/list")
+    @LoginCheck
     public BaseResponse<List<QuestionListVO>> questionList(HttpServletRequest request){
         final User loginUser = userFeignClient.getLoginUser(request);
         List<QuestionListVO> questionCollectionList = questionCollectionService.getQuestionCollectionList(loginUser);

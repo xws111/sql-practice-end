@@ -18,6 +18,7 @@
         <module>sql-practice-judge-service</module>
         <module>sql-practice-study-service</module>
         <module>sql-practice-article-service</module>
+        <module>sql-practice-security</module>
     </modules>
     <properties>
         <java.version>8</java.version>

@@ -5,6 +5,7 @@ import com.xws111.sqlpractice.common.ResultUtils;
 import com.xws111.sqlpractice.model.vo.RankListVO;
 import com.xws111.sqlpractice.model.vo.RankVO;
 import com.xws111.sqlpractice.question.service.QuestionSubmitService;
+import com.xws111.sqlpractice.security.annotation.LoginCheck;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,13 @@ public class QuestionRankController {
     public BaseResponse<List<RankListVO>> getQuestionRankList(HttpServletRequest request, @RequestParam Integer id) {
         return ResultUtils.success(questionSubmitService.getQuestionRankList(request,id));
     }
+
+    /**
+     * 获取自己的排名
+     * @param request
+     * @return RankVO
+     */
+    @LoginCheck
     @GetMapping("/my/overall")
     public BaseResponse<RankVO> getMyRankList(HttpServletRequest request) {
         return ResultUtils.success(questionSubmitService.getQuestionRankByCurrentId(request));

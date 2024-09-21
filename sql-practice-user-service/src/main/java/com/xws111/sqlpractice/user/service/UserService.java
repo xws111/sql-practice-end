@@ -20,7 +20,6 @@ import java.util.List;
  */
 public interface UserService extends IService<User> {
 
-    String USER_LOGIN_STATE = "loginState";
 
     /**
      * 用户注册
